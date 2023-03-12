@@ -1,4 +1,4 @@
-package com.study.deposit.global.auth;
+package com.study.deposit.global.security;
 
 import com.study.deposit.domain.user.domain.Users;
 import java.util.ArrayList;

@@ -1,19 +1,15 @@
-package com.study.deposit.global.auth;
+package com.study.deposit.global.security;
 
 import com.study.deposit.domain.user.dao.UserDao;
 import com.study.deposit.domain.user.domain.LoginType;
 import com.study.deposit.domain.user.domain.Role;
 import com.study.deposit.domain.user.domain.Users;
-import java.util.Collections;
 import java.util.Optional;
-import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 

@@ -1,9 +1,8 @@
-package com.study.deposit.global.auth;
+package com.study.deposit.global.security;
 
 import com.study.deposit.domain.user.domain.LoginType;
 import java.util.Map;
 import lombok.Builder;
-import lombok.Getter;
 
 @Builder
 public class OAuthAttributes {
