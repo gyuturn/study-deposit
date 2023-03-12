@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Builder
-@Getter
 public class OAuthAttributes {
     private Map<String, Object> attributes;
     private String nameAttributeKey;
@@ -28,16 +27,35 @@ public class OAuthAttributes {
 
 
     private static OAuthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
-        Map<String, Object> response = (Map<String, Object>) attributes.get("kakao_account");
-        Map<String, Object> account = (Map<String, Object>) response.get("profile");
+        Map<String, Object> kakao_account = (Map<String, Object>) attributes.get("kakao_account");  // 카카오로 받은 데이터에서 계정 정보가 담긴 kakao_account 값을 꺼낸다.
+        Map<String, Object> profile = (Map<String, Object>) kakao_account.get("profile");   // 마찬가지로 profile(nickname, image_url.. 등) 정보가 담긴 값을 꺼낸다.
 
         return OAuthAttributes.builder()
-                .name((String) account.get("nickname"))
-                .email((String) response.get("email"))
-                .attributes(response)
+                .name((String) profile.get("nickname"))
+                .email((String) kakao_account.get("email"))
+                .attributes(attributes)
                 .provider(LoginType.KAKAO.getProvider())
                 .nameAttributeKey(userNameAttributeName)
                 .build();
     }
 
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    public String getNameAttributeKey() {
+        return nameAttributeKey;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
 }
