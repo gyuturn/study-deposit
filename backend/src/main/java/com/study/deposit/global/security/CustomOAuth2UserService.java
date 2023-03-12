@@ -45,7 +45,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                     .email(attributes.getEmail())
                     .nickName("test") //TODO 추후 회원가입시에는 닉네임 따로 받음
                     .loginType(LoginType.findByProvider(registrationId))
-                    .role(Role.ROLE_USER)
+                    .role(Role.USER)
                     .build());
         }
         return byEmail.get();
