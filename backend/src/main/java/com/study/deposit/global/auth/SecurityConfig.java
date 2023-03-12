@@ -21,12 +21,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
                 .formLogin().disable()
                 .httpBasic().disable()
                 .authorizeRequests()
-                .antMatchers("/api/user").permitAll()
+                .antMatchers("/api/v1").permitAll()
                 .and()
                 .oauth2Login().userInfoEndpoint().userService(customOAuth2UserService);
         return http.build();
