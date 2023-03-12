@@ -1,0 +1,55 @@
+package com.study.deposit.domain.user.service;
+
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import com.study.deposit.domain.user.dao.UserDao;
+import com.study.deposit.domain.user.domain.LoginType;
+import com.study.deposit.domain.user.domain.Role;
+import com.study.deposit.domain.user.domain.Users;
+import java.util.UUID;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+public class UserServiceTest {
+
+    @Mock
+    private UserDao userDao;
+    @InjectMocks
+    private UserService userService;
+
+    @Test
+    @DisplayName("사용자 닉네임 변경 로직 ")
+    public void testUpdateNickName() {
+        //given
+        String kakaoEmail = "test@kakao.com";
+        Users before = Users.builder()
+                .nickName("before")
+                .loginType(LoginType.KAKAO)
+                .email(kakaoEmail)
+                .role(Role.USER)
+                .id(UUID.randomUUID()).build();
+
+        String changeNickName = "newNickName";
+        Users after = Users.builder()
+                .nickName(changeNickName)
+                .loginType(LoginType.KAKAO)
+                .email(kakaoEmail)
+                .role(Role.USER)
+                .id(UUID.randomUUID()).build();
+
+        when(userDao.save(before)).thenReturn(after);
+
+        //when
+        userService.updateNickName(before, changeNickName);
+
+        // assert
+        verify(userDao, times(1)).save(before);
+    }
+}
