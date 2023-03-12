@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserDao userDao;
-    private final HttpSession httpSession;
 
 
     @Override
@@ -30,6 +29,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
+        //OAUTH 인증 서버(ex kakao, naver, google)
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint()
                 .getUserNameAttributeName();
@@ -37,22 +37,22 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName,
                 oAuth2User.getAttributes());
 
+        Users authUser = doAuthentication(registrationId, attributes);
+
+        return new PrincipalDetails(authUser, oAuth2User.getAttributes());
+    }
+
+    private Users doAuthentication(String registrationId, OAuthAttributes attributes) {
         Optional<Users> byEmail = userDao.findByEmail(attributes.getEmail());
         if (byEmail.isEmpty()) {
-            userDao.save(Users.builder()
+            return userDao.save(Users.builder()
                     .email(attributes.getEmail())
-                    .nickName("test")
+                    .nickName("test") //TODO 추후 회원가입시에는 닉네임 따로 받음
                     .loginType(LoginType.findByProvider(registrationId))
                     .role(Role.ROLE_USER)
                     .build());
         }
-//        httpSession.setAttribute("user", user);
-
-        return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority(Role.ROLE_USER.name())),
-                attributes.getAttributes(),
-                attributes.getNameAttributeKey()
-        );
+        return byEmail.get();
     }
 
 
