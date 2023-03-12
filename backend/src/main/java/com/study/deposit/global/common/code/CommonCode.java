@@ -1,4 +1,4 @@
-package com.study.deposit.common.code;
+package com.study.deposit.global.common.code;
 
 import lombok.Getter;
 

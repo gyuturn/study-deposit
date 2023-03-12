@@ -1,12 +1,11 @@
-package com.study.deposit.common.exception.handler;
+package com.study.deposit.global.common.exception.handler;
 
-import com.study.deposit.common.CommonResponse;
-import com.study.deposit.common.code.Code;
-import com.study.deposit.common.code.CommonCode;
-import com.study.deposit.common.exception.DefaultException;
+import com.study.deposit.global.common.CommonResponse;
+import com.study.deposit.global.common.code.Code;
+import com.study.deposit.global.common.code.CommonCode;
+import com.study.deposit.global.common.exception.DefaultException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
