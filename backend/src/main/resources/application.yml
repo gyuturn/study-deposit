@@ -5,8 +5,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/deposit_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: root
-    password: root1234
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: create #create, create-drop, none, update
@@ -20,8 +20,8 @@ spring:
       client:
         registration:
           kakao:
-            client-id: 7ee2b750676219c7f2c7d4f1b574bf4d
-            client-secret: LWMC7dvSoRq4kh7zB3QgZKRaKDRGgaT8
+            client-id: ${KAKAO_API_KEY}
+            client-secret: ${KAKAO_SECRET_KEY}
             client-name: Kakao
             redirect-uri: 'http://localhost:8080/login/oauth2/code/kakao'
             #
