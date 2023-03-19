@@ -85,42 +85,6 @@ class UserControllerTest {
     }
 
 
-    @Test
-    @WithMockUser
-    @DisplayName("닉네임 중복 체크 api - 닉네임이 중복된 경우")
-    void nicknameNotValid() throws Exception {
-        //given
-        String nickname = "existingNickname";
-        when(usersService.validNickName(nickname)).thenReturn(false);
-
-        //when
-        MvcResult result = mockMvc.perform(get("/api/v1/users/nickname/valid")
-                        .param("reqNickName", nickname))
-                .andExpect(status().isConflict())
-                .andReturn();
-
-        //then
-        verify(usersService, times(1)).validNickName(nickname);
-    }
-
-    @Test
-    @WithMockUser
-    @DisplayName("닉네임 중복 체크 api - 닉네임이 중복되지 않은 경우")
-    void nicknameValid() throws Exception {
-        //given
-        String nickname = "newNickname";
-        when(usersService.validNickName(nickname)).thenReturn(true);
-
-        //when
-        MvcResult result = mockMvc.perform(get("/api/v1/users/nickname/valid")
-                        .param("reqNickName", nickname))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        //then
-        verify(usersService, times(1)).validNickName(nickname);
-    }
-
     private String toJson(Object object) {
         try {
             return new ObjectMapper().writeValueAsString(object);

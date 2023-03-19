@@ -37,7 +37,8 @@ public class UserController {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "변경 성공"),
-                    @ApiResponse(responseCode = "401", description = "사용자 확인 불가")
+                    @ApiResponse(responseCode = "401", description = "사용자 확인 불가"),
+                    @ApiResponse(responseCode = "409", description = "사용 불가능한 유저 닉네임(중복된 유저)")
             }
     )
     @PatchMapping("/nickname")
@@ -54,8 +55,8 @@ public class UserController {
             + "db의 생성시간과 수정시간을 비교하여 일치하면 닉네임을 바꾸도록 권장")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "생성시간, 수정시간 일치 -> 닉네임 변경 홈페이지로 redirect 필요"),
-                    @ApiResponse(responseCode = "401", description = "사용자 확인 불가")
+                    @ApiResponse(responseCode = "200", description = "생성시간, 수정시간 불일치 -> 변경 필요없음"),
+                    @ApiResponse(responseCode = "302", description = "생성시간, 수정시간 일치 -> 닉네임 변경 홈페이지로 redirect 필요")
             }
     )
     @GetMapping("/nickname/check")
@@ -71,32 +72,6 @@ public class UserController {
                 .status(HttpStatus.OK)
                 .body(CommonResponse.toResponse(CommonCode.OK));
     }
-
-
-    @Operation(summary = "닉네임 중복조회 api", description = "사용자 닉네임 중복조회")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "사용가능한 유저 닉네임"),
-                    @ApiResponse(responseCode = "409", description = "사용 불가능한 유저 닉네임(중복된 유저)")
-            }
-    )
-    @GetMapping("/nickname/valid")
-    public ResponseEntity<CommonResponse> checkDuplicate(@RequestParam String reqNickName) {
-        //유저가 중복된 이름을 가진경우
-        if (!userService.validNickName(reqNickName)) {
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(CommonResponse.toResponse(UserErrorCode.DUP_NICKNAME));
-        }
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(CommonResponse.toResponse(CommonCode.OK));
-    }
-
-
-
-
 
 
 }
