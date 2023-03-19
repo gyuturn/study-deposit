@@ -43,7 +43,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         if (byEmail.isEmpty()) {
             return userDao.save(Users.builder()
                     .email(attributes.getEmail())
-                    .nickName("test") //TODO 추후 회원가입시에는 닉네임 따로 받음
+                    .nickName(attributes.getName())
                     .loginType(LoginType.findByProvider(registrationId))
                     .role(Role.USER)
                     .build());
