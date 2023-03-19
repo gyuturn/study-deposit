@@ -49,6 +49,29 @@ public class UserController {
                 .body(CommonResponse.toResponse(CommonCode.OK));
     }
 
+    @Operation(summary = "유저 로그인 or 회원가입인지 체크 api", description = "유저가 로그인하였는지 회원가입인지 체크하는 로직"
+            + "추후 닉네임이 실명인경우 닉네임 변경하도록 권장하기 위함"
+            + "db의 생성시간과 수정시간을 비교하여 일치하면 닉네임을 바꾸도록 권장")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "생성시간, 수정시간 일치 -> 닉네임 변경 홈페이지로 redirect 필요"),
+                    @ApiResponse(responseCode = "401", description = "사용자 확인 불가")
+            }
+    )
+    @GetMapping("/nickname/check")
+    public ResponseEntity<CommonResponse> checkNickName() {
+        if (userService.checkModifyNickName(authService.getUser())) {
+            //생성, 수정시간이 같기에 닉네임 변경이 필요함
+            return ResponseEntity
+                    .status(HttpStatus.FOUND)
+                    .body(CommonResponse.toResponse(CommonCode.REDIRECT));
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.toResponse(CommonCode.OK));
+    }
+
 
     @Operation(summary = "닉네임 중복조회 api", description = "사용자 닉네임 중복조회")
     @ApiResponses(
@@ -70,5 +93,10 @@ public class UserController {
                 .status(HttpStatus.OK)
                 .body(CommonResponse.toResponse(CommonCode.OK));
     }
+
+
+
+
+
 
 }

@@ -22,4 +22,8 @@ public class UserService {
         return userDao.findAll().stream()
                 .noneMatch(user -> reqNickName.equals(user.getNickName()));
     }
+
+    public boolean checkModifyNickName(Users user) {
+        return user.getCreatedDate().equals(user.getModifiedDate());
+    }
 }
