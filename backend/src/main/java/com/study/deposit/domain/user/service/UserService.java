@@ -16,4 +16,10 @@ public class UserService {
         Users updateNickName = user.updateNickName(changeNickName);
         userDao.save(updateNickName);
     }
+
+    //닉네임 중복조회
+    public boolean validNickName(String reqNickName) {
+        return userDao.findAll().stream()
+                .noneMatch(user -> reqNickName.equals(user.getNickName()));
+    }
 }
