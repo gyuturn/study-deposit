@@ -3,4 +3,13 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/deposit_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
-    password: root123
+    password: root1234
+  jpa:
+    hibernate:
+      ddl-auto: create #create, create-drop, none, update
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy # set DB column name by snake case
+#  sql:
+#    init:
+#      mode: always
+#      schema-locations: data.sql
