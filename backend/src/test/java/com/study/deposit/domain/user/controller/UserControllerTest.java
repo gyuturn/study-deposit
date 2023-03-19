@@ -6,6 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -72,7 +73,7 @@ class UserControllerTest {
 
         //then
         MvcResult result = mockMvc.perform(
-                        MockMvcRequestBuilders.patch("/api/v1/users/nickname")
+                        patch("/api/v1/users/nickname")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(toJson(nickNameReqDto)))
@@ -81,6 +82,43 @@ class UserControllerTest {
 
         verify(usersService, times(1)).updateNickName(beforeUser, after);
         verify(authService, times(1)).getUser();
+    }
+
+
+    @Test
+    @WithMockUser
+    @DisplayName("닉네임 중복 체크 api - 닉네임이 중복된 경우")
+    void nicknameNotValid() throws Exception {
+        //given
+        String nickname = "existingNickname";
+        when(usersService.validNickName(nickname)).thenReturn(false);
+
+        //when
+        MvcResult result = mockMvc.perform(get("/api/v1/users/nickname/valid")
+                        .param("reqNickName", nickname))
+                .andExpect(status().isConflict())
+                .andReturn();
+
+        //then
+        verify(usersService, times(1)).validNickName(nickname);
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("닉네임 중복 체크 api - 닉네임이 중복되지 않은 경우")
+    void nicknameValid() throws Exception {
+        //given
+        String nickname = "newNickname";
+        when(usersService.validNickName(nickname)).thenReturn(true);
+
+        //when
+        MvcResult result = mockMvc.perform(get("/api/v1/users/nickname/valid")
+                        .param("reqNickName", nickname))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        //then
+        verify(usersService, times(1)).validNickName(nickname);
     }
 
     private String toJson(Object object) {
