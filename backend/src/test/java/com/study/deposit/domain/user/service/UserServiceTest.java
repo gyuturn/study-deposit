@@ -1,5 +1,6 @@
 package com.study.deposit.domain.user.service;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -8,6 +9,7 @@ import com.study.deposit.domain.user.dao.UserDao;
 import com.study.deposit.domain.user.domain.LoginType;
 import com.study.deposit.domain.user.domain.Role;
 import com.study.deposit.domain.user.domain.Users;
+import java.util.Arrays;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,5 +53,33 @@ public class UserServiceTest {
 
         // assert
         verify(userDao, times(1)).save(before);
+    }
+
+
+    @Test
+    @DisplayName("유저가 중복된 닉네임을 중복검사 하는경우")
+    void testCheckDupNickNameReturnsFalseWhenNickNameIsDuplicated() {
+        // given
+        String reqNickName = "sameNickName";
+        Users user1 = makeUser().updateNickName("sameNickName");
+        Users user2 = makeUser().updateNickName("nickName");
+        when(userDao.findAll()).thenReturn(Arrays.asList(user1, user2));
+
+        // when
+        boolean result = userService.validNickName(reqNickName);
+
+        // then
+        assertFalse(result);
+        verify(userDao, times(1)).findAll();
+    }
+
+
+    private Users makeUser() {
+        return Users.builder()
+                .nickName("test")
+                .loginType(LoginType.KAKAO)
+                .email("test@naver.com")
+                .role(Role.USER)
+                .id(UUID.randomUUID()).build();
     }
 }
