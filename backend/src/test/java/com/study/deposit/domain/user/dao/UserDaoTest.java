@@ -39,4 +39,23 @@ class UserDaoTest {
         Assertions.assertThat(result.getNickName()).isEqualTo(after);
     }
 
+
+    @Test
+    @DisplayName("유저 생성시간 수정시간 같은지 테스트 dao")
+    void checkModifyNickName() {
+        //give
+        Users beforeUser = Users.builder()
+                .nickName("test")
+                .loginType(LoginType.KAKAO)
+                .email("test@naver.com")
+                .role(Role.USER)
+                .id(UUID.randomUUID()).build();
+        Users saveUser = userDao.save(beforeUser);
+        //when
+        boolean result = saveUser.getCreatedDate().equals(saveUser.getModifiedDate());
+        //then
+        Assertions.assertThat(result).isTrue();
+    }
+
+
 }
