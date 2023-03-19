@@ -12,6 +12,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,6 +36,7 @@ public class Users extends BaseTimeEntity implements Serializable {
     private UUID id;
 
     @NotNull
+    @Email
     private String email;
 
     @NotNull
@@ -47,5 +49,10 @@ public class Users extends BaseTimeEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     @Setter
     private Role role;
+
+    public Users updateNickName(String nickName) {
+        this.nickName = nickName;
+        return this;
+    }
 
 }

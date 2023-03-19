@@ -1,5 +1,6 @@
-package com.study.deposit.global.security;
+package com.study.deposit.global.config;
 
+import com.study.deposit.global.security.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
