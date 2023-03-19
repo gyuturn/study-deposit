@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
     private static final String COOKIE_NAME = "JSESSIONID";
-    private final SecurityContextLogoutHandler logoutHandler;
 
 
     public Users getUser() {
@@ -43,7 +42,7 @@ public class AuthService {
             //인증정보가 존재하는경우(로그인 되어 있는경우)
             removeCookie(response);
             log.info("cookie삭제 완료");
-            logoutHandler.logout(request, response, authentication);
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
             log.info("security session 삭제 완료");
         }
     }
