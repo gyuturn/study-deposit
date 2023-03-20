@@ -20,6 +20,7 @@ export default {
     handleImageClick() {
       // Handle the image click event here
       console.log("Image clicked");
+      console.log("Image clicked");
     },
   },
 };
@@ -36,5 +37,6 @@ export default {
     margin: auto 
   }
 }
+ 
 
 </style>
