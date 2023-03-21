@@ -9,7 +9,7 @@ spring:
     password: ${DB_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: create #create, create-drop, none, update
+      ddl-auto: update #create, create-drop, none, update
       naming:
         physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy # set DB column name by snake case
     show-sql: true
@@ -34,3 +34,5 @@ spring:
             token_uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user_name_attribute: "id"
+front:
+  login_redirect: ${FRONT_LOGIN_REDIRECT}
