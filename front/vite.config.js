@@ -1,8 +1,10 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vuetify from 'vite-plugin-vuetify'
+import dotenv from 'dotenv';
 
 const path = require('path')
+dotenv.config();
 
 // https://vitejs.dev/config/
 export default defineConfig({
