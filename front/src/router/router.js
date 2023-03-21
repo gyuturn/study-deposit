@@ -5,7 +5,7 @@ const router = createRouter({
     history : createWebHistory(),
     routes : [ // path별 component를 추가한다.
         { path : "/", name : "", component : "" },
-        { path : "/login", name : "kakak-login", component : KakaoLogin },
+        { path : "/login/kakao", name : "kakak-login", component : KakaoLogin },
     ]
 });
 
