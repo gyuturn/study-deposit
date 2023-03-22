@@ -43,7 +43,7 @@ public class UserController {
     )
     @PatchMapping("/nickname")
     public ResponseEntity<CommonResponse> updateNickname(@RequestBody @Valid NickNameReqDto reqDto) {
-        userService.updateNickName(authService.getUser(), reqDto.getNickName());
+        userService.updateNickName(authService.getUser(), reqDto.getNewNickName());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
