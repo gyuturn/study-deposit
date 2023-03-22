@@ -8,7 +8,6 @@ export default {
   methods: {},
   mounted() {
     // 백엔드 서버로 요청 보내기
-    this.loading = true; // 로딩 중 표시
     axios
       .get(`${import.meta.env.VITE_API_URI}/users/nickname/check`, {
         withCredentials: true, // Include cookies in the request
@@ -30,14 +29,5 @@ export default {
 </script>
 
 <style>
-.center-content {
-  margin: auto;
-}
-@media (max-width: 600px) {
-  .center-content {
-    width: 100%;
-    height: 100%;
-    margin: auto;
-  }
-}
+
 </style>

@@ -26,16 +26,6 @@ export default {
 </script>
 
 <style>
-.center-content {
-  margin: auto ;
-}
-@media (max-width: 600px) {
-  .center-content {
-    width: 100% ;
-    height: 100% ;
-    margin: auto 
-  }
-}
  
 
 </style>
