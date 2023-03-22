@@ -24,7 +24,7 @@
             <v-btn @click="updateNickname">변경</v-btn>
           </v-col>
           <v-col cols="12" md="6" class="text-center flex-column main-btn">
-            <v-btn @click="updateNickname">다음에 하기</v-btn>
+            <v-btn @click="goHome">다음에 하기</v-btn>
           </v-col>
         </v-row>
       </v-card-actions>
@@ -63,11 +63,12 @@ export default {
           }
         })
         .catch(function (error) {
-          console.log("");
-          console.log("ERROR : " + JSON.stringify(error));
-          console.log("");
+          this.$router.push({ path: "/error" });
         });
     },
+    goHome(){
+      this.$router.push({ path: "/" });
+    }
   },
   mounted() {
     // 서버에서 현재 닉네임을 가져옵니다.
