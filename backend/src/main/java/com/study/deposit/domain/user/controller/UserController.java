@@ -43,7 +43,7 @@ public class UserController {
     )
     @PatchMapping("/nickname")
     public ResponseEntity<CommonResponse> updateNickname(@RequestBody @Valid NickNameReqDto reqDto) {
-        userService.updateNickName(authService.getUser(), reqDto.getNickName());
+        userService.updateNickName(authService.getUser(), reqDto.getNewNickName());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -56,7 +56,7 @@ public class UserController {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "생성시간, 수정시간 불일치 -> 변경 필요없음"),
-                    @ApiResponse(responseCode = "302", description = "생성시간, 수정시간 일치 -> 닉네임 변경 홈페이지로 redirect 필요")
+                    @ApiResponse(responseCode = "202", description = "생성시간, 수정시간 일치 -> 닉네임 변경 홈페이지로 redirect 필요")
             }
     )
     @GetMapping("/nickname/check")
@@ -64,7 +64,7 @@ public class UserController {
         if (userService.checkModifyNickName(authService.getUser())) {
             //생성, 수정시간이 같기에 닉네임 변경이 필요함
             return ResponseEntity
-                    .status(HttpStatus.FOUND)
+                    .status(HttpStatus.ACCEPTED)
                     .body(CommonResponse.toResponse(CommonCode.REDIRECT));
         }
 

@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +16,6 @@ import com.study.deposit.domain.user.domain.Users;
 import com.study.deposit.domain.user.dto.NickNameReqDto;
 import com.study.deposit.domain.user.service.AuthService;
 import com.study.deposit.domain.user.service.UserService;
-import com.study.deposit.global.config.annotation.WithAuthUser;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,7 +30,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @WebMvcTest(controllers = UserController.class)
@@ -65,7 +62,7 @@ class UserControllerTest {
 
         String after = "after";
         NickNameReqDto nickNameReqDto = new NickNameReqDto();
-        nickNameReqDto.setNickName(after);
+        nickNameReqDto.setNewNickName(after);
 
         //when
         when(authService.getUser()).thenReturn(beforeUser);

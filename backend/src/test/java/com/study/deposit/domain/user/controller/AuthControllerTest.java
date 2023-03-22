@@ -3,14 +3,22 @@ package com.study.deposit.domain.user.controller;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.study.deposit.domain.user.domain.LoginType;
+import com.study.deposit.domain.user.domain.Role;
+import com.study.deposit.domain.user.domain.Users;
 import com.study.deposit.domain.user.service.AuthService;
 import com.study.deposit.domain.user.service.UserService;
+import com.study.deposit.global.common.code.CommonCode;
+import java.util.UUID;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +34,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -56,6 +65,26 @@ class AuthControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.cookie().doesNotExist("JSESSIONID"));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("유저 정보 가져오기 테스트")
+    public void getUserInfo() throws Exception {
+        // given
+        Users user = Users.builder()
+                .nickName("test")
+                .loginType(LoginType.KAKAO)
+                .email("test@naver.com")
+                .role(Role.USER)
+                .id(UUID.randomUUID()).build();
+        given(authService.getUser()).willReturn(user);
+
+        // when, then
+        mockMvc.perform(get("/api/v1/auth")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("code").value(CommonCode.OK.getCode()));
     }
 
 }

@@ -22,14 +22,22 @@ export default {
 
 
 <style>
-  /* 반응형 최대크기
-  app { margin:0 auto; width:750px; min-height:100%; padding-top:71px; border-left:1px #D8D8D8 solid; border-right:1px #D8D8D8 solid; positon:relative; text-align:center; }
-
-  /* 여백제거 + 드래그방지 */
-  /* body{ padding:0; margin:0; -ms-user-select: none; -moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; user-select: none; } */
-
-  /* 반응형 시작 */
-  /* @media(max-width:750px){
-    #app{ width:100%; border-left:0; border-right:0; }
-  }   */
+.main-btn{
+  background-color: #006FFD;
+  border-radius: 12px;
+  color: #FFFFFF;
+  width: 327px;
+  height: 48px;
+  margin: 10px;
+}
+.center-content {
+  margin: auto;
+}
+@media (max-width: 600px) {
+  .center-content {
+    width: 100%;
+    height: 100%;
+    margin: auto;
+  }
+}
 </style>
