@@ -2,6 +2,7 @@ import { createWebHistory, createRouter } from "vue-router";
 import KakaoLogin from "@/components/login/KakaoLogin.vue"
 import LoginOrSignUpCheck from "@/components/login/LoginOrSignUpCheck.vue"
 import EnterNickName from "@/components/login/EnterNickName.vue"
+import SuccessChange from "@/components/login/SuccessChange.vue"
 
 const router = createRouter({
     history : createWebHistory(),
@@ -10,6 +11,7 @@ const router = createRouter({
         { path : "/login/kakao", name : "KakaoLogin", component : KakaoLogin },
         { path : "/login/check", name : "LoginOrSignUpCheck", component : LoginOrSignUpCheck },
         { path : "/login/enter/nickname", name : "EnterNickName", component : EnterNickName },
+        { path : "/change/success", name : "SuccessChange", component : SuccessChange },
     ]
 });
 

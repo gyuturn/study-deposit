@@ -18,7 +18,7 @@ export default {
           this.$router.push({ path: "/" });
         } else if (response.status === 202) {
           //  닉네임 변경 요청 요망
-          this.$router.push({ path: "/mypage/nickname" });
+          this.$router.push({ path: "/login/enter/nickname" });
         }
       })
       .catch((error) => {
