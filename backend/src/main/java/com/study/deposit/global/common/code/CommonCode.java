@@ -1,4 +1,4 @@
-package com.study.deposit.common.code;
+package com.study.deposit.global.common.code;
 
 import lombok.Getter;
 
@@ -10,7 +10,8 @@ public enum CommonCode implements Code{
     UNAUTHORIZED("C004","인증되지 않은 요청"),
     FORBIDDEN("C005","접근 권한 부족"),
     NOT_FOUND("C006","요청 리소스 존재하지 않음"),
-    INTERNAL_SERVER_ERROR("C007","서버에 오류 발생");
+    INTERNAL_SERVER_ERROR("C007","서버에 오류 발생"),
+    REDIRECT("C008","리다이렉트 필요함");
 
 
     private String code;

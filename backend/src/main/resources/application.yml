@@ -1,0 +1,38 @@
+spring:
+  output:
+    ansi:
+      enabled: always
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/deposit_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update #create, create-drop, none, update
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy # set DB column name by snake case
+    show-sql: true
+    generate-ddl: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${KAKAO_API_KEY}
+            client-secret: ${KAKAO_SECRET_KEY}
+            client-name: Kakao
+            redirect-uri: 'http://localhost:8080/login/oauth2/code/kakao'
+            #
+            scope: profile_nickname, account_email
+            authorization-grant-type: authorization_code
+            client-authentication-method: POST
+        provider:
+          kakao:
+            authorization_uri: https://kauth.kakao.com/oauth/authorize
+            token_uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user_name_attribute: "id"
+front:
+  login_redirect: ${FRONT_LOGIN_REDIRECT}

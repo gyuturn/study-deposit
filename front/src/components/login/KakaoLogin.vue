@@ -7,7 +7,7 @@
           </div>
         </v-col>
         <v-col cols="12" md="6" class="text-center flex-column">
-          <img src="@/assets/kakao_login.png" alt="kakaoLogin" @click="handleImageClick" class ="mx-auto"/>
+          <img src="@/assets/kakao_login.png" alt="kakaoLogin" @click="enterKaKaoLogin" class ="mx-auto"/>
         </v-col>
       </v-row>
     </v-container>
@@ -17,24 +17,15 @@
 export default {
   name: "KakaoLogin",
   methods: {
-    handleImageClick() {
-      // Handle the image click event here
-      console.log("Image clicked");
+    enterKaKaoLogin() {
+      //springsecurity oauth2 clinet redirect uri
+      window.location.href = `${import.meta.env.VITE_KAKAO_URI}`
     },
   },
 };
 </script>
 
 <style>
-.center-content {
-  margin: auto ;
-}
-@media (max-width: 600px) {
-  .center-content {
-    width: 100% ;
-    height: 100% ;
-    margin: auto 
-  }
-}
+ 
 
 </style>

@@ -1,6 +1,6 @@
-package com.study.deposit.common.exception;
+package com.study.deposit.global.common.exception;
 
-import com.study.deposit.common.code.Code;
+import com.study.deposit.global.common.code.Code;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 

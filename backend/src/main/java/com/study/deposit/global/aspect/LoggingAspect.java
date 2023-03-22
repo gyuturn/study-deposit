@@ -14,8 +14,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Component
 @Slf4j
 public class LoggingAspect {
-
-    @Around("execution(* com.study.depoist.*.controller.*(..))")
+    @Around("execution(* com.study.deposit.domain..*.controller.*.*(..))")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.currentTimeMillis();
         try {

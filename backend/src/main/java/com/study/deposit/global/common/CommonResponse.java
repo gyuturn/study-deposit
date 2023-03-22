@@ -1,8 +1,8 @@
-package com.study.deposit.common;
+package com.study.deposit.global.common;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.study.deposit.common.code.Code;
+import com.study.deposit.global.common.code.Code;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
