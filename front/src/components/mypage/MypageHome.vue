@@ -13,12 +13,12 @@
                 <img src="@/assets/person.png" />
               </v-list-item-title>
               <v-list-item-subtitle class="emphasized-text"
-                >이름</v-list-item-subtitle
+                >{{ nickname }}</v-list-item-subtitle
               >
               <v-list-item-subtitle class="emphasized-text"
-                >포인트: 3000P</v-list-item-subtitle
+                >포인트: {{ sumOfChargeAmount }}</v-list-item-subtitle
               >
-              <v-list-item-subtitle>kksy2423@naver.com</v-list-item-subtitle>
+              <v-list-item-subtitle>{{ email }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -41,8 +41,29 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "MypageHome",
+  mounted() {
+    // 백엔드 서버로 요청 보내기
+    axios
+      .get(`${import.meta.env.VITE_API_URI}/users`, {
+        withCredentials: true, // Include cookies in the request
+      })
+      .then((response) => {
+          console.log(response.status);
+
+        if (response.status === 200) {
+          this.nickname=response.data.data.nickName;
+          this.sumOfChargeAmount=`${response.data.data.sumOfChargeAmount}원`;
+          this.email=response.data.data.email;
+        } 
+      })
+      .catch((error) => {
+         //  로그인 안되어 있음
+          this.$router.push({ path: "/login/kakao" });
+      });
+  },
   methods: {},
   data() {
     return {
@@ -53,6 +74,9 @@ export default {
         { title: "포인트 환전하기" },
         { title: "로그아웃" },
       ],
+      nickname: "",
+      sumOfChargeAmount:"",
+      email:""
     };
   },
 };
