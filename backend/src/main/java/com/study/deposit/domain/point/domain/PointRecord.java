@@ -42,4 +42,11 @@ public class PointRecord {
     private Long chargeAmount;
 
 
+    public static PointRecord makePointRecord(Users users, Long chargeAmount) {
+        return PointRecord.builder()
+                .chargeAmount(chargeAmount)
+                .users(users)
+                .chargeDate(LocalDateTime.now())
+                .build();
+    }
 }
