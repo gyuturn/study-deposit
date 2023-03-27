@@ -1,6 +1,8 @@
 package com.study.deposit.domain.point.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.study.deposit.domain.point.dao.PointRecordDao;
@@ -8,7 +10,6 @@ import com.study.deposit.domain.point.domain.PointRecord;
 import com.study.deposit.domain.user.domain.LoginType;
 import com.study.deposit.domain.user.domain.Role;
 import com.study.deposit.domain.user.domain.Users;
-import com.study.deposit.domain.user.service.AuthService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +17,10 @@ import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 
 @ExtendWith(MockitoExtension.class)
 class PointRecordServiceTest {
@@ -62,5 +62,19 @@ class PointRecordServiceTest {
                 .email("test@naver.com")
                 .role(Role.USER)
                 .id(UUID.randomUUID()).build();
+    }
+
+    @Test
+    @DisplayName("포인트 삽입 로직")
+    void insertRecord() {
+        //given
+        Users testUser = makeUser();
+        Long testChargeAmount = 100L;
+
+        //when
+        pointRecordService.insertRecord(testUser, testChargeAmount);
+
+        //then
+        verify(pointRecordDao).save(any(PointRecord.class));
     }
 }
