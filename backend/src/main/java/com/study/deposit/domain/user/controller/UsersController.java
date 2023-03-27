@@ -1,6 +1,7 @@
 package com.study.deposit.domain.user.controller;
 
 
+import com.study.deposit.domain.point.service.PointRecordService;
 import com.study.deposit.domain.user.dto.NickNameReqDto;
 import com.study.deposit.domain.user.service.AuthService;
 import com.study.deposit.domain.user.service.UserService;
@@ -26,9 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
 @Validated
-public class LoginController {
+public class UsersController {
     private final AuthService authService;
     private final UserService userService;
+    private final PointRecordService pointRecordService;
 
 
     @Operation(summary = "닉네임 변경 api", description = "사용자 닉네임 변경")
@@ -40,6 +42,7 @@ public class LoginController {
             }
     )
     @PatchMapping("/nickname")
+
     public ResponseEntity<CommonResponse> updateNickname(@RequestBody @Valid NickNameReqDto reqDto) {
         userService.updateNickName(authService.getUser(), reqDto.getNewNickName());
 
@@ -71,5 +74,20 @@ public class LoginController {
                 .body(CommonResponse.toResponse(CommonCode.OK));
     }
 
+
+    @Operation(summary = "포인트가 포함된 유저 정보 api", description = "마이페이지 접속시 필요한 정보를 얻어오기 위한 api")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "정상 처리"),
+                    @ApiResponse(responseCode = "401", description = "로그인 되어 있지 않음")
+            }
+    )
+    @GetMapping()
+    public ResponseEntity<CommonResponse> getUserInfo() {
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.toResponse(CommonCode.OK));
+    }
 
 }

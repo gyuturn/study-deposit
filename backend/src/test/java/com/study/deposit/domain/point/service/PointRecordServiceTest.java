@@ -17,7 +17,6 @@ import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -41,7 +40,7 @@ class PointRecordServiceTest {
         List<PointRecord> pointRecords = makePointRecords(users);
         when(pointRecordDao.findByUsers(users)).thenReturn(pointRecords);
         //when
-        Long sum = pointRecordService.sumRecordByUser(users);
+        Long sum = pointRecordService.getSumRecordByUser(users);
 
         //then
         assertEquals(600L, sum);

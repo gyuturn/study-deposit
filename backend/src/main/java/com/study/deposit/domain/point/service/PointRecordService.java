@@ -3,7 +3,6 @@ package com.study.deposit.domain.point.service;
 import com.study.deposit.domain.point.dao.PointRecordDao;
 import com.study.deposit.domain.point.domain.PointRecord;
 import com.study.deposit.domain.user.domain.Users;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +16,7 @@ public class PointRecordService {
     private final PointRecordDao pointRecordDao;
 
     //금액 합계
-    public Long sumRecordByUser(Users users) {
+    public Long getSumRecordByUser(Users users) {
         long sum = 0;
         List<PointRecord> usersPoint = pointRecordDao.findByUsers(users);
         for (PointRecord pointRecord : usersPoint) {

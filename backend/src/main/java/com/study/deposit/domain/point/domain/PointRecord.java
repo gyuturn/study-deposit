@@ -1,6 +1,7 @@
 package com.study.deposit.domain.point.domain;
 
 import com.study.deposit.domain.user.domain.Users;
+import com.sun.istack.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import javax.persistence.Column;
@@ -34,11 +35,14 @@ public class PointRecord {
 
     @ManyToOne
     @JoinColumn(name = "users_id")
+    @NotNull
     private Users users;
 
+    @NotNull
     private LocalDateTime chargeDate;
 
     @Positive
+    @NotNull
     private Long chargeAmount;
 
 
