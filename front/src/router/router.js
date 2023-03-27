@@ -4,6 +4,8 @@ import LoginOrSignUpCheck from "@/components/login/LoginOrSignUpCheck.vue"
 import EnterNickName from "@/components/login/EnterNickName.vue"
 import SuccessChange from "@/components/login/SuccessChange.vue"
 
+import MypageHome from "@/components/mypage/MypageHome.vue"
+
 const router = createRouter({
     history : createWebHistory(),
     routes : [ // path별 component를 추가한다.
@@ -11,7 +13,10 @@ const router = createRouter({
         { path : "/login/kakao", name : "KakaoLogin", component : KakaoLogin },
         { path : "/login/check", name : "LoginOrSignUpCheck", component : LoginOrSignUpCheck },
         { path : "/login/enter/nickname", name : "EnterNickName", component : EnterNickName },
+
         { path : "/change/success", name : "SuccessChange", component : SuccessChange },
+
+        { path : "/mypage/home", name : "MypageHome", component : MypageHome },
     ]
 });
 
