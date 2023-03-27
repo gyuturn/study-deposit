@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="fill-height justify-center align-center">
-    <v-card elevation="0">
+    <v-card elevation="0"  height="100%" width="100%">
       <v-card-title
         class="text-center mb-3 font-weight-bold text--primary text--body-2"
         >나의 프로필</v-card-title
@@ -22,7 +22,6 @@
             </v-list-item-content>
           </v-list-item>
         </v-list>
-        <v-divider></v-divider>
         <v-list>
           <v-list-item v-for="(item, index) in listItems" :key="index">
             <v-list-item-content>
