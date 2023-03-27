@@ -6,7 +6,6 @@ import com.study.deposit.domain.user.service.AuthService;
 import com.study.deposit.domain.user.service.UserService;
 import com.study.deposit.global.common.CommonResponse;
 import com.study.deposit.global.common.code.CommonCode;
-import com.study.deposit.global.common.code.user.UserErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -28,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
 @Validated
-public class UserController {
+public class LoginController {
     private final AuthService authService;
     private final UserService userService;
 
