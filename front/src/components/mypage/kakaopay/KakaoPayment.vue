@@ -3,8 +3,9 @@
     <v-card elevation="0" width="100%">
       <v-card-title
         class="text-center mb-3 font-weight-bold text--primary text--body-2"
-        >얼마를 결제하시겠어요?</v-card-title
       >
+        얼마를 결제하시겠어요?
+      </v-card-title>
       <v-card-text
         class="text-center mb-3 font-weight-bold text--primary text--body-2"
       >
@@ -17,6 +18,7 @@
               v-model="chargeAmount"
               label="충전금액"
               required
+              :error-messages="chargeAmountErrorMessage"
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="6" class="text-center flex-column main-btn">
@@ -36,15 +38,19 @@ export default {
       chargeAmount: "",
     };
   },
+  computed: {
+    chargeAmountErrorMessage() {
+      if (this.chargeAmount === "") {
+        return "충전금액을 입력해주세요";
+      }
+      if (!/^[1-9][0-9]*$/.test(this.chargeAmount)) {
+        return "충전금액은 양의 정수만 입력 가능합니다";
+      }
+      return "";
+    },
+  },
   methods: {
     requestPay: function () {
-      if (
-        !(/^\d+$/.test(this.chargeAmount) && parseInt(this.chargeAmount) > 0)
-      ) {
-        alert("충전금액을 양의 정수로 입력해주세요.");
-        return;
-      }
-
       var IMP = window.IMP; // 생략 가능
       IMP.init("imp47202403"); // 예: imp00000000
       // IMP.request_pay(param, callback) 결제창 호출
@@ -78,5 +84,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>
