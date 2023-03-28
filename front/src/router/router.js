@@ -5,6 +5,7 @@ import EnterNickName from "@/components/login/EnterNickName.vue"
 import SuccessChange from "@/components/login/SuccessChange.vue"
 
 import MypageHome from "@/components/mypage/MypageHome.vue"
+import KakaoPayment from "@/components/mypage/kakaopay/KakaoPayment.vue"
 
 const router = createRouter({
     history : createWebHistory(),
@@ -17,6 +18,8 @@ const router = createRouter({
         { path : "/change/success", name : "SuccessChange", component : SuccessChange },
 
         { path : "/mypage/home", name : "MypageHome", component : MypageHome },
+
+        { path : "/payment/kakaopay", name : "KakaoPayment", component : KakaoPayment },
     ]
 });
 
