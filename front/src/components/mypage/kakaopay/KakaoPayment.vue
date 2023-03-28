@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="fill-height justify-center align-center">
-    <v-card elevation="0" height="100%" width="100%">
+    <v-card elevation="0" width="100%">
       <v-card-title
         class="text-center mb-3 font-weight-bold text--primary text--body-2"
         >얼마를 결제하시겠어요?</v-card-title
@@ -38,6 +38,13 @@ export default {
   },
   methods: {
     requestPay: function () {
+      if (
+        !(/^\d+$/.test(this.chargeAmount) && parseInt(this.chargeAmount) > 0)
+      ) {
+        alert("충전금액을 양의 정수로 입력해주세요.");
+        return;
+      }
+
       var IMP = window.IMP; // 생략 가능
       IMP.init("imp47202403"); // 예: imp00000000
       // IMP.request_pay(param, callback) 결제창 호출
@@ -51,7 +58,7 @@ export default {
           amount: this.chargeAmount,
           buyer_email: this.email,
           buyer_name: this.nickname,
-          m_redirect_url: "localhost:5173"
+          m_redirect_url: "localhost:5173",
         },
         (rsp) => {
           // callback ,callback은 pc인경우 m_redirect_url은 모바일인경우
@@ -72,6 +79,4 @@ export default {
 </script>
 
 <style>
- 
-
 </style>

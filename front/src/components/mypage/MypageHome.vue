@@ -16,7 +16,7 @@
                 nickname
               }}</v-list-item-subtitle>
               <v-list-item-subtitle class="emphasized-text"
-                >포인트: {{ sumOfChargeAmount }}</v-list-item-subtitle
+                >보유 포인트: {{ sumOfChargeAmount }}</v-list-item-subtitle
               >
               <v-list-item-subtitle>{{ email }}</v-list-item-subtitle>
             </v-list-item-content>
