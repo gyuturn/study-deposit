@@ -21,6 +21,14 @@ public class SwaggerConfig {
                 .pathsToMatch(BASIC_API_PATH+"/users/**")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi pointRecordKakaoPay() {
+        return GroupedOpenApi.builder()
+                .group("pointRecord-KakaoPay")
+                .pathsToMatch(BASIC_API_PATH+"/point/record/kakaopay/**")
+                .build();
+    }
     @Bean
     public GroupedOpenApi auth() {
         return GroupedOpenApi.builder()
