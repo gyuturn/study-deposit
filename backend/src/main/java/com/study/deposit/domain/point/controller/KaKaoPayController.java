@@ -38,11 +38,11 @@ public class KaKaoPayController implements  PointRecordController{
 
     @Override
     @PostMapping("/payment/prepare")
-    public ResponseEntity<CommonResponse> paymentPrepare(@RequestBody @Valid PointRecordPrepareDto dto) throws IOException {
+    public ResponseEntity<CommonResponse> paymentPrepare(@RequestBody @Valid PointRecordPrepareDto dto)  {
         try {
             String token = iamPortService.getToken();
             iamPortService.paymentPrepare(dto, token);
-        } catch (IOException e) {
+        } catch (Exception e) {
             ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(CommonResponse.toResponse(IamPortErrorCode.UNAUTHORIZED_TOKEN));
         }

@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import { v4 as uuidv4 } from "uuid";
 export default {
   name: "KakaoPayment",
   data() {
@@ -50,35 +51,102 @@ export default {
     },
   },
   methods: {
-    requestPay: function () {
+    //사전 결제 백엔드에 요청
+    preparePay: function (data) {
+      axios({
+        method: "post", // [요청 타입]
+        url: `${
+          import.meta.env.VITE_API_URI
+        }/point/record/kakaopay/payment/prepare`, // [요청 주소]
+        data: data, // [요청 데이터]
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        },
+        withCredentials: true,
+      })
+        .then((response) => {})
+        .catch(function (error) {
+          this.$router.push({ path: "/error" });
+        });
+    },
+    requestPay: function (data) {
+      const data = {
+        pg: "kakaopay",
+        pay_method: "card",
+        merchant_uid: createOrderNum(),
+        name: "스터디보증 포인트 구매",
+        amount: this.chargeAmount,
+        buyer_email: this.email,
+        buyer_name: this.nickname,
+        m_redirect_url: "localhost:5173",
+      };
+
+      preparePay(data);
+
       var IMP = window.IMP; // 생략 가능
       IMP.init("imp47202403"); // 예: imp00000000
       // IMP.request_pay(param, callback) 결제창 호출
       IMP.request_pay(
         {
           // param
-          pg: "kakaopay",
-          pay_method: "card",
-          merchant_uid: "merchant_" + new Date().getTime(),
-          name: "스터디보증 포인트 구매",
-          amount: this.chargeAmount,
-          buyer_email: this.email,
-          buyer_name: this.nickname,
-          m_redirect_url: "localhost:5173",
+          pg: data.pg,
+          pay_method: data.pay_method,
+          merchant_uid: data.merchant_uid,
+          name: data.name,
+          amount: data.amount,
+          buyer_email: data.buyer_email,
+          buyer_name: data.buyer_name,
+          m_redirect_url:data.m_redirect_url,
         },
         (rsp) => {
           // callback ,callback은 pc인경우 m_redirect_url은 모바일인경우
           if (rsp.success) {
-            console.log(rsp.success);
-            console.log(rsp);
+            data.impUid = res.imp_uid;
+            data.merchant_uid = rsp.merchant_uid;
+            this.paymentComplete(data);
             // 결제 성공 시 로직,
           } else {
             console.log(rep);
             // 결제 실패 시 로직,
-            console.log("실패");
+            this.$router.push({ path: "/error" });
           }
         }
       );
+    },
+
+    //주문번호 만들기
+    createOrderNum: function () {
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+
+      let orderNum = year + month + day;
+      for (let i = 0; i < 10; i++) {
+        orderNum += Math.floor(Math.random() * 8);
+      }
+      return orderNum;
+    },
+
+    // 계산 완료
+    paymentComplete: function (data) {
+      axios({
+        method: "post", // [요청 타입]
+        url: `${import.meta.env.VITE_API_URI}/point/record`, // [요청 주소]
+        data: JSON.stringify(data), // [요청 데이터]
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        },
+        withCredentials: true,
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            this.$router.push({ path: "/mypage/home" });
+          }
+        })
+        .catch(function (error) {
+          this.$router.push({ path: "/error" });
+        });
     },
   },
 };
