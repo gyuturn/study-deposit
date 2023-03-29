@@ -69,6 +69,7 @@ export default {
           this.$router.push({ path: "/error" });
         });
     },
+
      //주문번호 만들기
     createOrderNum: function () {
       const date = new Date();
@@ -82,6 +83,8 @@ export default {
       }
       return orderNum;
     },
+
+    //결제 요청
     requestPay: function () {
       const data = {
         pg: "kakaopay",
@@ -114,8 +117,10 @@ export default {
         (rsp) => {
           // callback ,callback은 pc인경우 m_redirect_url은 모바일인경우
           if (rsp.success) {
-            data.impUid = res.imp_uid;
+            data.impUid = rsp.imp_uid;
             data.merchant_uid = rsp.merchant_uid;
+            console.log(rsp);
+            console.log(data);
             this.paymentComplete(data);
             // 결제 성공 시 로직,
           } else {
