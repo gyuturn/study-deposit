@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 export default {
   name: "KakaoPayment",
   data() {
@@ -69,11 +69,24 @@ export default {
           this.$router.push({ path: "/error" });
         });
     },
-    requestPay: function (data) {
+     //주문번호 만들기
+    createOrderNum: function () {
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+
+      let orderNum = year + month + day;
+      for (let i = 0; i < 10; i++) {
+        orderNum += Math.floor(Math.random() * 8);
+      }
+      return orderNum;
+    },
+    requestPay: function () {
       const data = {
         pg: "kakaopay",
         pay_method: "card",
-        merchant_uid: createOrderNum(),
+        merchant_uid: this.createOrderNum(),
         name: "스터디보증 포인트 구매",
         amount: this.chargeAmount,
         buyer_email: this.email,
@@ -81,7 +94,7 @@ export default {
         m_redirect_url: "localhost:5173",
       };
 
-      preparePay(data);
+      this.preparePay(data);
 
       var IMP = window.IMP; // 생략 가능
       IMP.init("imp47202403"); // 예: imp00000000
@@ -114,19 +127,7 @@ export default {
       );
     },
 
-    //주문번호 만들기
-    createOrderNum: function () {
-      const date = new Date();
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-
-      let orderNum = year + month + day;
-      for (let i = 0; i < 10; i++) {
-        orderNum += Math.floor(Math.random() * 8);
-      }
-      return orderNum;
-    },
+   
 
     // 계산 완료
     paymentComplete: function (data) {
