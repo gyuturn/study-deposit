@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 public enum PointRecordErrorCode implements Code {
     NOT_EXIST_POINT_RECORD("EPR001", "존재하지 않은 pointrecord 데이터 입니다."),
+    NOT_VALID_PAYMENT("EPR002", "유효하지 않은 결제입니다.(데이터 조작 의심)"),
             ;
     private String code;
     private String  message;
