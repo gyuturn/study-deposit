@@ -2,7 +2,10 @@ package com.study.deposit.domain.point.service;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.study.deposit.domain.point.domain.PointRecord;
 import com.study.deposit.domain.point.dto.PointRecordPrepareDto;
+import com.study.deposit.global.common.code.pointrecord.PointRecordErrorCode;
+import com.study.deposit.global.common.exception.payment.PaymentException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -12,16 +15,23 @@ import java.net.URL;
 import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class IamPortService {
 
     @Value("${imp_key}")
@@ -30,19 +40,11 @@ public class IamPortService {
     @Value("${imp_secret}")
     private String impSecret;
 
-    @Data
-    private class Response{
-        private PaymentInfo response;
-    }
-
-    @Data
-    private class PaymentInfo{
-        private int amount;
-    }
-
+    private final PointRecordService pointRecordService;
 
     /**
      * iamport token을 얻어오는 로직
+     *
      * @return token -> iam port 에서 가져오는 토큰
      * @throws IOException
      */
@@ -85,10 +87,28 @@ public class IamPortService {
         return token;
     }
 
+    public boolean validPayment(Long chargeForIamPort, PointRecord chargeForDb) throws IOException {
+        //아이엠포트 결제 금액과 DB내의 결제금액 비교
+        log.info("Iamport 결제금액:{}, db내의 금액:{}", chargeForIamPort, chargeForDb.getChargeAmount());
+        if (!chargeForIamPort.equals(chargeForDb.getChargeAmount())) {
+            return false;
+        }
+        return true;
+    }
 
-    public void paymentPrepare(PointRecordPrepareDto prepareInfo,String token) throws IOException {
+    public void rollbackPayment(PointRecord notValidPointRecord, String accessToken, String imp_uid)
+            throws IOException {
+        log.error("Iamport 결제금액과 db내의 금액이 일치하지 않음. 해당 pointRecord 롤백(삭제)");
+        pointRecordService.deleteRecord(notValidPointRecord);
+        paymentCancel(accessToken, imp_uid);
+        throw new PaymentException(PointRecordErrorCode.NOT_VALID_PAYMENT, HttpStatus.CONFLICT);
 
-        String url = "https://api.iamport.kr/payments/prepare?_token="+token;
+    }
+
+
+    public void paymentPrepare(PointRecordPrepareDto prepareInfo, String token) throws IOException {
+        log.info("iam port 사전결제 진행");
+        String url = "https://api.iamport.kr/payments/prepare?_token=" + token;
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -101,44 +121,46 @@ public class IamPortService {
 
     /**
      * 결제 정보 확인(iamport)
+     *
      * @param imp_uid -> 프론트 결제 과정에서 생성되는 imp_uid
-     * @param access_token -> 위에서 얻어온 access_token
+     * @param token   -> Iamport access token
      * @return -> 결제 금액
      * @throws IOException
      */
-    public int paymentInfo(String imp_uid, String access_token) throws IOException {
+    public Long paymentInfo(String imp_uid, String token) throws IOException, ParseException {
 
-        HttpsURLConnection conn = null;
+        log.info("iam port 단건조회, imp_uid:{}", imp_uid);
+        String url = "https://api.iamport.kr/payments/" + imp_uid + "?_token=" + token;
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity<String>(headers);
+        ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+        Long amount = parseForAmount(response);
+        return amount;
+    }
 
-        URL url = new URL("https://api.iamport.kr/payments/" + imp_uid);
-
-        conn = (HttpsURLConnection) url.openConnection();
-
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Authorization", access_token);
-        conn.setDoOutput(true);
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
-
-        Gson gson = new Gson();
-
-        Response response = gson.fromJson(br.readLine(), Response.class);
-
-        br.close();
-        conn.disconnect();
-
-        return response.getResponse().getAmount();
+    private Long parseForAmount(ResponseEntity<String> response) {
+        JSONParser parser = new JSONParser();
+        Long amount = null;
+        try {
+            JSONObject obj = (JSONObject) parser.parse(response.getBody());
+            JSONObject responseObject = (JSONObject) obj.get("response");
+            amount = (Long) responseObject.get("amount");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return amount;
     }
 
     /**
      * 결제 취소
+     *
      * @param access_token
-     * @param imp_uid -> 프론트 결제에서 보내는 imp_uid
-     * @param amount -> 결제 금액
-     * @param reason -> 해당 이유?
+     * @param imp_uid      -> 프론트 결제에서 보내는 imp_uid
      * @throws IOException
      */
-    public void payMentCancle(String access_token, String imp_uid, int amount, String reason) throws IOException  {
+    private void paymentCancel(String access_token, String imp_uid) throws IOException {
         System.out.println("결제 취소");
 
         System.out.println(access_token);
@@ -160,10 +182,7 @@ public class IamPortService {
 
         JsonObject json = new JsonObject();
 
-        json.addProperty("reason", reason);
         json.addProperty("imp_uid", imp_uid);
-        json.addProperty("amount", amount);
-        json.addProperty("checksum", amount);
 
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
 

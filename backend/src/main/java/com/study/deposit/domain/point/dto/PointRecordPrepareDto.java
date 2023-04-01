@@ -13,5 +13,5 @@ public class PointRecordPrepareDto {
     private String merchant_uid;
     @NotNull
     @Positive
-    private Double amount;
+    private Long amount;
 }
