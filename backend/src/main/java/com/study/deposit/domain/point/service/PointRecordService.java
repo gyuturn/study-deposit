@@ -3,9 +3,13 @@ package com.study.deposit.domain.point.service;
 import com.study.deposit.domain.point.dao.PointRecordDao;
 import com.study.deposit.domain.point.domain.PointRecord;
 import com.study.deposit.domain.user.domain.Users;
+import com.study.deposit.global.common.code.pointrecord.PointRecordErrorCode;
+import com.study.deposit.global.common.exception.DefaultException;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,5 +35,14 @@ public class PointRecordService {
         PointRecord newPointRecord = PointRecord.makePointRecord(users, chargeAmount);
         pointRecordDao.save(newPointRecord);
         log.info("{}의 충전 point:{}", users.getNickName(), chargeAmount);
+    }
+
+    //금액 id로 찾기
+    public PointRecord findByMerchantId(String merchant_uuid) {
+        Optional<PointRecord> pointRecord = pointRecordDao.findById(merchant_uuid);
+        if (pointRecord.isEmpty()) {
+            throw new DefaultException(PointRecordErrorCode.NOT_EXIST_POINT_RECORD, HttpStatus.NOT_FOUND)
+        }
+        return pointRecord.get();
     }
 }

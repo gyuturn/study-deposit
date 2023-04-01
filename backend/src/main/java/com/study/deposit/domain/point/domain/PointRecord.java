@@ -27,11 +27,7 @@ import org.springframework.data.annotation.CreatedDate;
 public class PointRecord {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(nullable = false, length = 36)
-    @Type(type = "uuid-char")
-    private UUID id;
+    private String merchant_uid;
 
     @ManyToOne
     @JoinColumn(name = "users_id")
