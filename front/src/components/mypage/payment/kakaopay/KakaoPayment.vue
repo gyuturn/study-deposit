@@ -70,7 +70,7 @@ export default {
         });
     },
 
-     //주문번호 만들기
+    //주문번호 만들기
     createOrderNum: function () {
       const date = new Date();
       const year = date.getFullYear();
@@ -112,16 +112,17 @@ export default {
           amount: data.amount,
           buyer_email: data.buyer_email,
           buyer_name: data.buyer_name,
-          m_redirect_url:data.m_redirect_url,
+          m_redirect_url: data.m_redirect_url,
         },
         (rsp) => {
           // callback ,callback은 pc인경우 m_redirect_url은 모바일인경우
           if (rsp.success) {
-            data.impUid = rsp.imp_uid;
+            data.imp_uid = rsp.imp_uid;
             data.merchant_uid = rsp.merchant_uid;
-            console.log(rsp);
-            console.log(data);
-            this.paymentComplete(data);
+            this.$router.push({
+              path: "/payment/result",
+              query: { imp_uid: data.imp_uid },
+            });
             // 결제 성공 시 로직,
           } else {
             console.log(rep);
@@ -132,13 +133,13 @@ export default {
       );
     },
 
-   
-
     // 계산 완료
     paymentComplete: function (data) {
       axios({
         method: "post", // [요청 타입]
-        url: `${import.meta.env.VITE_API_URI}/point/record`, // [요청 주소]
+        url: `${
+          import.meta.env.VITE_API_URI_NOT_AUTH
+        }/point/record/kakaopay/payment/complete`, // [요청 주소]
         data: JSON.stringify(data), // [요청 데이터]
         headers: {
           "Content-Type": "application/json; charset=utf-8",
