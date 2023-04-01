@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.json.simple.parser.ParseException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 public interface PointRecordController {
 
@@ -16,4 +17,6 @@ public interface PointRecordController {
             throws IOException, ParseException;
 
     ResponseEntity<CommonResponse> paymentPrepare(@RequestBody @Valid PointRecordPrepareDto dto) throws IOException;
+
+    ResponseEntity<CommonResponse> paymentResult(@RequestParam String imp_uid);
 }

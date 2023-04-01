@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.study.deposit.domain.point.domain.PointRecord;
 import com.study.deposit.domain.point.dto.PointRecordPrepareDto;
+import com.study.deposit.domain.point.dto.PointRecordResultDto;
 import com.study.deposit.global.common.code.pointrecord.PointRecordErrorCode;
 import com.study.deposit.global.common.exception.payment.PaymentException;
 import java.io.BufferedReader;
@@ -127,7 +128,7 @@ public class IamPortService {
      * @return -> 결제 금액
      * @throws IOException
      */
-    public Long paymentInfo(String imp_uid, String token) throws IOException, ParseException {
+    public PointRecordResultDto paymentInfo(String imp_uid, String token) throws IOException, ParseException {
 
         log.info("iam port 단건조회, imp_uid:{}", imp_uid);
         String url = "https://api.iamport.kr/payments/" + imp_uid + "?_token=" + token;
@@ -136,21 +137,24 @@ public class IamPortService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<String>(headers);
         ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
-        Long amount = parseForAmount(response);
-        return amount;
+        PointRecordResultDto pointRecordResultDto = parseForAmount(response);
+        return pointRecordResultDto;
     }
 
-    private Long parseForAmount(ResponseEntity<String> response) {
+    private PointRecordResultDto parseForAmount(ResponseEntity<String> response) {
         JSONParser parser = new JSONParser();
         Long amount = null;
+        String status = null;
         try {
             JSONObject obj = (JSONObject) parser.parse(response.getBody());
             JSONObject responseObject = (JSONObject) obj.get("response");
             amount = (Long) responseObject.get("amount");
+            status = (String) responseObject.get("status");
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return amount;
+        return new PointRecordResultDto(amount,status);
+
     }
 
     /**

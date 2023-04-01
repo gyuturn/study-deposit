@@ -3,12 +3,15 @@ package com.study.deposit.domain.point.controller;
 import com.study.deposit.domain.point.domain.PointRecord;
 import com.study.deposit.domain.point.dto.PointRecordCompleteDto;
 import com.study.deposit.domain.point.dto.PointRecordPrepareDto;
+import com.study.deposit.domain.point.dto.PointRecordResultDto;
 import com.study.deposit.domain.point.service.IamPortService;
 import com.study.deposit.domain.point.service.PointRecordService;
 import com.study.deposit.domain.user.service.AuthService;
 import com.study.deposit.global.common.CommonResponse;
 import com.study.deposit.global.common.code.CommonCode;
 import com.study.deposit.global.common.code.iamPort.IamPortErrorCode;
+import com.study.deposit.global.common.code.pointrecord.PointRecordErrorCode;
+import com.study.deposit.global.common.exception.payment.PaymentException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,8 +23,10 @@ import org.json.simple.parser.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -49,11 +54,12 @@ public class KaKaoPayController implements PointRecordController {
             throws IOException, ParseException {
 
         String token = iamPortService.getToken();
-        Long chargeForIamPort = iamPortService.paymentInfo(dto.getImp_uid(), token); //iamport에서 가져오는 결제 금액
+        Long chargeForIamPort = iamPortService.paymentInfo(dto.getImp_uid(), token)
+                .getChargeAmount(); //iamport에서 가져오는 결제 금액
         PointRecord chargeForDb = pointRecordService.findByMerchantId(dto.getMerchant_uid());//DB에서 가져오는 금액
         if (!iamPortService.validPayment(chargeForIamPort, chargeForDb)) {
             //결제가 유효하지 않은 경우
-            iamPortService.rollbackPayment(chargeForDb,token, dto.getImp_uid());
+            iamPortService.rollbackPayment(chargeForDb, token, dto.getImp_uid());
         }
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -81,6 +87,29 @@ public class KaKaoPayController implements PointRecordController {
         }
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonResponse.toResponse(CommonCode.OK));
+    }
+
+    @Override
+    @Operation(summary = "최종 결제 확인 api", description = ""
+            + "프론트에서 해당 결제가 정상적으로 얼마가 입금되었는지 체크한다."
+            + "iamport 단건조회를 통해 확인한다.")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "정상 처리, 내부 Status값을 확인하고 cancelled인경우 데이터 변조 의심(에러페이지로)"),
+                    @ApiResponse(responseCode = "404", description = "결제가 정상적으로 이루어지지 않음(데이터 위조 확인 필요)"),
+            }
+    )
+    @GetMapping("/api/v1/point/record/kakaopay/payment/result")
+    public ResponseEntity<CommonResponse> paymentResult(@RequestParam String imp_uid) {
+        PointRecordResultDto pointRecordResultDto;
+        try {
+            String token = iamPortService.getToken();
+            pointRecordResultDto = iamPortService.paymentInfo(imp_uid, token);
+        } catch (Exception e) {
+            throw new PaymentException(PointRecordErrorCode.NOT_VALID_PAYMENT, HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonResponse.toResponse(CommonCode.OK, pointRecordResultDto));
     }
 
 
