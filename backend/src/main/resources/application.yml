@@ -37,5 +37,5 @@ spring:
 front:
   login_redirect: ${FRONT_LOGIN_REDIRECT}
 
-imp_key: 5000484772665176
-imp_secret: xq45s6DsSbTSnnwSqmjdYm5yDRtiTDJoKZ0LJnJlsyEYEP9nVK9KFS3gWKqlT3YL4w1sNmfEWEwSlUZy
+imp_key: ${IMPORT_API_KEY}
+imp_secret: ${IMPORT_API_SECRET_KEY}
