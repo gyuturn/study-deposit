@@ -15,6 +15,7 @@ import com.study.deposit.domain.user.domain.Role;
 import com.study.deposit.domain.user.domain.Users;
 import com.study.deposit.domain.user.dto.NickNameReqDto;
 import com.study.deposit.domain.user.service.AuthService;
+import com.study.deposit.domain.user.service.MyPageService;
 import com.study.deposit.domain.user.service.UserService;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -45,6 +46,8 @@ class UsersControllerTest {
 
     @MockBean
     AuthService authService;
+    @MockBean
+    MyPageService myPageService;
 
 
     @Test
