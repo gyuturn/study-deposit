@@ -8,6 +8,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -151,6 +152,23 @@ class KaKaoPayControllerTest {
         verify(iamPortService).validPayment(eq(1000L), eq(pointRecordInDb));
         verify(pointRecordService, never()).deleteRecord(pointRecordInDb);
         verify(iamPortService, never()).rollbackPayment(any(), any(), any());
+    }
+
+    @Test
+    @WithAuthUser(email = "test@naver.com", role = "ROLE_USER")
+    @DisplayName("최종결제 확인 api테스트[성공]")
+    public void paymentResult_shouldReturnOk() throws Exception {
+        // Arrange
+        PointRecordResultDto pointRecordResultDto = new PointRecordResultDto(1000L, "paid");
+        String testImpUid = "test_imp_uid";
+        when(iamPortService.getToken()).thenReturn(TEST_TOKEN);
+        when(iamPortService.paymentInfo(testImpUid, TEST_TOKEN)).thenReturn(pointRecordResultDto);
+
+        // Act & Assert
+        mockMvc.perform(get("/api/v1/point/record/kakaopay/payment/result")
+                        .with(csrf())
+                        .param("imp_uid", testImpUid))
+                .andExpect(status().isOk());
     }
 
     private String toJson(Object object) {
