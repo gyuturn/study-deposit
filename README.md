@@ -72,7 +72,7 @@
 #### <a href="https://github.com/users/gyuturn/projects/2">Github Project 칸판보드</a> <br>
 
 ## 📱 &nbsp; 기술스택
-#4FC08D
+
 
 FE : &nbsp; 
 <img src="https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=Vue&logoColor=white"/>
