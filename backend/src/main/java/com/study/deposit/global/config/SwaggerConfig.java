@@ -13,6 +13,7 @@ public class SwaggerConfig {
     public static final String DESCRIPTION="DEPOSIT API명세서";
     public static final String VERSION="v0.0.1";
     private static final String BASIC_API_PATH="/api/v1";
+    private static final String BASIC_API_NOT_AUTH_PATH="/api/v2";
 
     @Bean
     public GroupedOpenApi user() {
@@ -26,7 +27,7 @@ public class SwaggerConfig {
     public GroupedOpenApi pointRecordKakaoPay() {
         return GroupedOpenApi.builder()
                 .group("pointRecord-KakaoPay")
-                .pathsToMatch(BASIC_API_PATH+"/point/record/kakaopay/**")
+                .pathsToMatch(BASIC_API_NOT_AUTH_PATH+"/point/record/kakaopay/**",BASIC_API_PATH+"/point/record/kakaopay/**")
                 .build();
     }
     @Bean
