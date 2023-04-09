@@ -15,7 +15,6 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
@@ -153,7 +152,7 @@ public class IamPortService {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return new PointRecordResultDto(amount,status);
+        return new PointRecordResultDto(amount, status);
 
     }
 
