@@ -36,10 +36,12 @@ class PointRecordDaoTest {
         long chargeAmount = 10000;
         //when
         PointRecord newPointRecord = PointRecord.builder()
+                .merchant_uid(UUID.randomUUID().toString())
                 .chargeAmount(chargeAmount)
                 .users(savedUsers)
                 .chargeDate(LocalDateTime.now())
                 .build();
+
         pointRecordDao.save(newPointRecord);
         //then
         List<PointRecord> pointList = pointRecordDao.findByUsers(savedUsers);

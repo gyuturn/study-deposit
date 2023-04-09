@@ -1,5 +1,6 @@
 package com.study.deposit.domain.point.domain;
 
+import com.study.deposit.domain.point.dto.PointRecordPrepareDto;
 import com.study.deposit.domain.user.domain.Users;
 import com.sun.istack.NotNull;
 import java.time.LocalDateTime;
@@ -25,13 +26,8 @@ import org.springframework.data.annotation.CreatedDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PointRecord {
-
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(nullable = false, length = 36)
-    @Type(type = "uuid-char")
-    private UUID id;
+    private String merchant_uid;
 
     @ManyToOne
     @JoinColumn(name = "users_id")
@@ -46,9 +42,10 @@ public class PointRecord {
     private Long chargeAmount;
 
 
-    public static PointRecord makePointRecord(Users users, Long chargeAmount) {
+    public static PointRecord makePointRecord(Users users, PointRecordPrepareDto pointRecordPrepareDto) {
         return PointRecord.builder()
-                .chargeAmount(chargeAmount)
+                .merchant_uid(pointRecordPrepareDto.getMerchant_uid())
+                .chargeAmount(pointRecordPrepareDto.getAmount())
                 .users(users)
                 .chargeDate(LocalDateTime.now())
                 .build();

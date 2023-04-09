@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PointRecordDao extends JpaRepository<PointRecord, UUID> {
+public interface PointRecordDao extends JpaRepository<PointRecord, String> {
     List<PointRecord> findByUsers(Users users);
 
 }

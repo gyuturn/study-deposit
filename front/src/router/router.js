@@ -5,7 +5,8 @@ import EnterNickName from "@/components/login/EnterNickName.vue"
 import SuccessChange from "@/components/login/SuccessChange.vue"
 
 import MypageHome from "@/components/mypage/MypageHome.vue"
-
+import KakaoPayment from "@/components/mypage/payment/kakaopay/KakaoPayment.vue"
+import PaymentResult from "@/components/mypage/payment/PaymentResult.vue"
 const router = createRouter({
     history : createWebHistory(),
     routes : [ // path별 component를 추가한다.
@@ -17,6 +18,9 @@ const router = createRouter({
         { path : "/change/success", name : "SuccessChange", component : SuccessChange },
 
         { path : "/mypage/home", name : "MypageHome", component : MypageHome },
+
+        { path : "/payment/kakaopay", name : "KakaoPayment", component : KakaoPayment },
+        { path : "/payment/result", name : "PaymentResult", component : PaymentResult },
     ]
 });
 

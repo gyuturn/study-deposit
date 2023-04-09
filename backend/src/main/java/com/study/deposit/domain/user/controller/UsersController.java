@@ -4,6 +4,7 @@ package com.study.deposit.domain.user.controller;
 import com.study.deposit.domain.point.service.PointRecordService;
 import com.study.deposit.domain.user.dto.NickNameReqDto;
 import com.study.deposit.domain.user.service.AuthService;
+import com.study.deposit.domain.user.service.MyPageService;
 import com.study.deposit.domain.user.service.UserService;
 import com.study.deposit.global.common.CommonResponse;
 import com.study.deposit.global.common.code.CommonCode;
@@ -30,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UsersController {
     private final AuthService authService;
     private final UserService userService;
-    private final PointRecordService pointRecordService;
+    private final MyPageService myPageService;
 
 
     @Operation(summary = "닉네임 변경 api", description = "사용자 닉네임 변경")
@@ -82,12 +83,11 @@ public class UsersController {
                     @ApiResponse(responseCode = "401", description = "로그인 되어 있지 않음")
             }
     )
-    @GetMapping()
-    public ResponseEntity<CommonResponse> getUserInfo() {
-
+    @GetMapping
+    public ResponseEntity<CommonResponse> getUserInfoToMyPage() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(CommonResponse.toResponse(CommonCode.OK));
+                .body(CommonResponse.toResponse(CommonCode.OK,myPageService.getMyPageHomeDto()));
     }
 
 }

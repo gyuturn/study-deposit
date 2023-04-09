@@ -36,3 +36,6 @@ spring:
             user_name_attribute: "id"
 front:
   login_redirect: ${FRONT_LOGIN_REDIRECT}
+
+imp_key: ${IMPORT_API_KEY}
+imp_secret: ${IMPORT_API_SECRET_KEY}
