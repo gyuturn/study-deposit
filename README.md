@@ -22,6 +22,7 @@
 
 #### 스터디방 목록(메인 홈)
 <img width="143" alt="스크린샷 2023-04-09 오후 2 51 35" src="https://user-images.githubusercontent.com/87477702/230756814-5114cbb0-14ba-42d1-a1c7-67c170babbca.png">
+
 - 현재 진행중인 스터디방 목록 제공
 - 메인 홈
 
