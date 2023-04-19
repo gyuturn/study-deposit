@@ -39,6 +39,14 @@ public class SwaggerConfig {
     }
 
     @Bean
+    public GroupedOpenApi studyRoom() {
+        return GroupedOpenApi.builder()
+                .group("studyRoom")
+                .pathsToMatch(BASIC_API_PATH+"/studyroom/**")
+                .build();
+    }
+
+    @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .addServersItem(new Server().url("/")) //swagger cors issue
