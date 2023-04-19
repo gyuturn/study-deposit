@@ -1,9 +1,7 @@
-package com.study.deposit.domain.studyRoom.domain;
+package com.study.deposit.domain.hashTag.domain;
 
-import com.study.deposit.domain.user.domain.Users;
+import com.study.deposit.domain.studyRoom.domain.StudyRoom;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -20,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserStudyRoom {
+public class StudyRoomHashTag {
     @Id
     @GeneratedValue
     private Long id;
@@ -31,20 +29,17 @@ public class UserStudyRoom {
     private StudyRoom studyRoom;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "users_id")
+    @JoinColumn(name = "hash_tag_id")
     @NotNull
-    private Users users;
+    private HashTag hashTag;
 
-    @Enumerated(EnumType.STRING)
-    private StudyRoomRole studyRoomRole;
-
-    //호스트가 방을 만들때만 사용가능
-    public static UserStudyRoom toEntityForHost(StudyRoom studyRoom, Users host) {
-        return UserStudyRoom.builder()
+    //스터디방 생성 시 해당 스터디방에 맞는 해시태그 저장하기 위한 메서드
+    public static StudyRoomHashTag toEntity(StudyRoom studyRoom, HashTag hashTag) {
+        return StudyRoomHashTag.builder()
                 .studyRoom(studyRoom)
-                .users(host)
-                .studyRoomRole(StudyRoomRole.HOST)
+                .hashTag(hashTag)
                 .build();
     }
+
 
 }

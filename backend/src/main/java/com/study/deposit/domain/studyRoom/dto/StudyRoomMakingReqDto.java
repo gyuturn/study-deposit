@@ -1,9 +1,11 @@
 package com.study.deposit.domain.studyRoom.dto;
 
+import com.study.deposit.domain.hashTag.domain.HashTag;
 import com.study.deposit.domain.studyRoom.domain.AttendanceType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.Data;
@@ -24,6 +26,8 @@ public class StudyRoomMakingReqDto {
     @NotNull
     @Positive
     private Long deposit;
+
+    private List<HashTag> hashTags;
 
 
 
