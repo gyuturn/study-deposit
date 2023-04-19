@@ -1,10 +1,7 @@
 package com.study.deposit.domain.studyRoom.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
-import com.study.deposit.domain.hashTag.domain.HashTag;
-import com.study.deposit.domain.hashTag.domain.StudyRoomHashTag;
 import com.study.deposit.domain.user.domain.LoginType;
 import com.study.deposit.domain.user.domain.Role;
 import com.study.deposit.domain.user.domain.Users;
@@ -17,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 class UserStudyRoomTest {
     @Test
-    @DisplayName("스터디방, 유저 -> UserStudyRoom entity 생성")
+    @DisplayName("스터디방, 유저 -> UserStudyRoom entity 생성(방장용)")
     void toEntity() {
         //given
         StudyRoom testStudyRoom = StudyRoom.builder().
@@ -38,9 +35,10 @@ class UserStudyRoomTest {
                 .nickName("testNickName")
                 .build();
         //when
-        UserStudyRoom userStudyRoom = UserStudyRoom.toEntity(testStudyRoom, testUser);
+        UserStudyRoom userStudyRoom = UserStudyRoom.toEntityForHost(testStudyRoom, testUser);
         //then
         assertThat(userStudyRoom.getUsers()).isEqualTo(testUser);
         assertThat(userStudyRoom.getStudyRoom()).isEqualTo(testStudyRoom);
+        assertThat(userStudyRoom.getStudyRoomRole()).isEqualTo(StudyRoomRole.HOST);
     }
 }
