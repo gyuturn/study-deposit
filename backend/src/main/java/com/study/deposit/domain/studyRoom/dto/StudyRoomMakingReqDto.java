@@ -9,6 +9,7 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 public class StudyRoomMakingReqDto {
@@ -17,8 +18,10 @@ public class StudyRoomMakingReqDto {
     @NotNull
     private AttendanceType attendanceType;
     @NotNull
+    @DateTimeFormat(pattern = "HH:mm:ss")
     private LocalTime attendanceTime;
     @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
     @NotNull
     @Positive

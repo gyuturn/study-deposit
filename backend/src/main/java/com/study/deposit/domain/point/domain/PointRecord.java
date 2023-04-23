@@ -41,7 +41,6 @@ public class PointRecord {
     @Enumerated(value = EnumType.STRING)
     private PaymentType paymentType;
 
-    @Positive
     @NotNull
     private Long chargeAmount;
 

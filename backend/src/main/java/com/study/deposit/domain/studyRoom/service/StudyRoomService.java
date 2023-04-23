@@ -44,6 +44,7 @@ public class StudyRoomService {
         //방장을 스터디방에 저장
         Users host = authService.getUser();
         insertUserToStudyRoom(savedStudyRoom, host);
+        enterStudyRoom(savedStudyRoom.getDeposit());
         log.info("스터디방 생성 후, 방장을 스터디방에 입장");
     }
 
