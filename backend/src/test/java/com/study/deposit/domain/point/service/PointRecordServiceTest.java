@@ -85,6 +85,23 @@ class PointRecordServiceTest {
     }
 
     @Test
+    @DisplayName("포인트 차감 로직")
+    void insertRecord_DELETE() {
+        //given
+        Users testUser = makeUser();
+        Long testChargeAmount = -100L;
+        PointRecordPrepareDto prepareDto = new PointRecordPrepareDto();
+        prepareDto.setMerchant_uid(UUID.randomUUID().toString());
+        prepareDto.setAmount(testChargeAmount);
+
+        //when
+        pointRecordService.insertRecord(testUser, prepareDto, PaymentType.PURCHASE);
+
+        //then
+        verify(pointRecordDao).save(any(PointRecord.class));
+    }
+
+    @Test
     @DisplayName("merchant_uid(pk)로 찾기[성공]")
     void findByMerchantId_shouldReturnPointRecord() {
         // Given
