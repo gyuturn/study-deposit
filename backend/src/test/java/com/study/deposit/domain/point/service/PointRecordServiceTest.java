@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.study.deposit.domain.point.dao.PointRecordDao;
+import com.study.deposit.domain.point.domain.PaymentType;
 import com.study.deposit.domain.point.domain.PointRecord;
 import com.study.deposit.domain.point.dto.PointRecordPrepareDto;
 import com.study.deposit.domain.user.domain.LoginType;
@@ -51,9 +52,9 @@ class PointRecordServiceTest {
 
     private List<PointRecord> makePointRecords(Users users) {
         List<PointRecord> testRecords = new ArrayList<>();
-        testRecords.add(new PointRecord(UUID.randomUUID().toString(), users, LocalDateTime.now(), 100L));
-        testRecords.add(new PointRecord(UUID.randomUUID().toString(), users, LocalDateTime.now(), 200L));
-        testRecords.add(new PointRecord(UUID.randomUUID().toString(), users, LocalDateTime.now(), 300L));
+        testRecords.add(new PointRecord(UUID.randomUUID().toString(), users, LocalDateTime.now(),PaymentType.CHARGE, 100L));
+        testRecords.add(new PointRecord(UUID.randomUUID().toString(), users, LocalDateTime.now(),PaymentType.CHARGE, 200L));
+        testRecords.add(new PointRecord(UUID.randomUUID().toString(), users, LocalDateTime.now(),PaymentType.CHARGE, 300L));
         return testRecords;
     }
 
@@ -77,7 +78,7 @@ class PointRecordServiceTest {
         prepareDto.setAmount(testChargeAmount);
 
         //when
-        pointRecordService.insertRecord(testUser, prepareDto);
+        pointRecordService.insertRecord(testUser, prepareDto, PaymentType.CHARGE);
 
         //then
         verify(pointRecordDao).save(any(PointRecord.class));
@@ -91,8 +92,9 @@ class PointRecordServiceTest {
         PointRecord pointRecord = PointRecord.builder()
                 .merchant_uid(merchantUuid)
                 .chargeAmount(1000L)
-                .chargeDate(LocalDateTime.now())
+                .paymentDate(LocalDateTime.now())
                 .users(makeUser())
+                .paymentType(PaymentType.CHARGE)
                 .build();
         when(pointRecordDao.findById(merchantUuid)).thenReturn(Optional.of(pointRecord));
 
