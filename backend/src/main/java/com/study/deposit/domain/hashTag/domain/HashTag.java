@@ -1,5 +1,6 @@
 package com.study.deposit.domain.hashTag.domain;
 
+import com.study.deposit.domain.hashTag.dto.MakeHashTagReqDto;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -21,5 +22,11 @@ public class HashTag {
 
     @NotNull
     private String tagName;
+
+    public static HashTag toEntity(MakeHashTagReqDto dto) {
+        return HashTag.builder()
+                .tagName(dto.getTagName())
+                .build();
+    }
 
 }
