@@ -50,7 +50,7 @@ class HashTagControllerTest {
 
         doNothing().when(hashTagService).makeHashTag(ArgumentMatchers.any(MakeHashTagReqDto.class));
 
-        mockMvc.perform(post("/hashtags")
+        mockMvc.perform(post("/api/v1/hashtag")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
