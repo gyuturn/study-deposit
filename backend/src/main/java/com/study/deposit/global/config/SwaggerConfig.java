@@ -47,6 +47,14 @@ public class SwaggerConfig {
     }
 
     @Bean
+    public GroupedOpenApi hashTag() {
+        return GroupedOpenApi.builder()
+                .group("hashtag")
+                .pathsToMatch(BASIC_API_PATH+"/hashtag/**")
+                .build();
+    }
+
+    @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .addServersItem(new Server().url("/")) //swagger cors issue
