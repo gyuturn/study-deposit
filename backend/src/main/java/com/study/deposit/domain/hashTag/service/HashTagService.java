@@ -23,6 +23,7 @@ public class HashTagService {
 
 
 
+    //스터디방 생성시 해시태그 매핑
     @Transactional
     public void hashTagsMapStudyRoom(List<HashTag> hashTags, StudyRoom savedStudyRoom) {
         List<StudyRoomHashTag> studyRoomHashTags = new ArrayList<>();
