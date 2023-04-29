@@ -1,8 +1,8 @@
 package com.study.deposit.domain.point.dao;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
+import com.study.deposit.domain.point.domain.PaymentType;
 import com.study.deposit.domain.point.domain.PointRecord;
 import com.study.deposit.domain.user.dao.UserDao;
 import com.study.deposit.domain.user.domain.LoginType;
@@ -11,7 +11,6 @@ import com.study.deposit.domain.user.domain.Users;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,8 @@ class PointRecordDaoTest {
                 .merchant_uid(UUID.randomUUID().toString())
                 .chargeAmount(chargeAmount)
                 .users(savedUsers)
-                .chargeDate(LocalDateTime.now())
+                .paymentDate(LocalDateTime.now())
+                .paymentType(PaymentType.CHARGE)
                 .build();
 
         pointRecordDao.save(newPointRecord);
