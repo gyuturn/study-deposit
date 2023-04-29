@@ -10,14 +10,17 @@ import com.study.deposit.global.common.code.CommonCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -45,4 +48,30 @@ public class HashTagController {
                 .status(HttpStatus.CREATED)
                 .body(CommonResponse.toResponse(CommonCode.CREATED));
     }
+
+    @Operation(summary = "해시태그 조회 api", description = "사용자 입력마다 해시태그 조회'\n")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "정상 생성"),
+                    @ApiResponse(responseCode = "401", description = "사용자 확인 불가"),
+                    @ApiResponse(responseCode = "404", description = "해당 입력으로 시작하는 해시태그 존재하지 않음"),
+            }
+    )
+    @GetMapping
+    public ResponseEntity<CommonResponse> getHashTags(@RequestParam() String input) {
+        List<HashTag> hashTags = hashTagService.getHashTags(input);
+        if (hashTags.size() == 0) {
+            //검색된 해시태그가 아무것도 없는경우
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(CommonResponse.toResponse(CommonCode.NOT_FOUND));
+        }
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.toResponse(CommonCode.OK, hashTags));
+
+
+    }
+
+
 }
