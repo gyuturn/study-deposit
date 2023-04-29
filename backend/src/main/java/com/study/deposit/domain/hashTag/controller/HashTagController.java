@@ -43,10 +43,10 @@ public class HashTagController {
     )
     @PostMapping
     public ResponseEntity<CommonResponse> createHashTag(@RequestBody MakeHashTagReqDto makeHashTagReqDto) {
-        hashTagService.makeHashTag(makeHashTagReqDto);
+        HashTag newHashTag = hashTagService.makeHashTag(makeHashTagReqDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(CommonResponse.toResponse(CommonCode.CREATED));
+                .body(CommonResponse.toResponse(CommonCode.CREATED,newHashTag));
     }
 
     @Operation(summary = "해시태그 조회 api", description = "사용자 입력마다 해시태그 조회'\n")

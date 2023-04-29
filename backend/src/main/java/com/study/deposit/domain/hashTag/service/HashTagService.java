@@ -36,16 +36,20 @@ public class HashTagService {
      * 해시태그 생성
      */
     @Transactional
-    public void makeHashTag(MakeHashTagReqDto makeHashTagReqDto) {
-        hashTagDao.save(HashTag.toEntity(makeHashTagReqDto));
+    public HashTag makeHashTag(MakeHashTagReqDto makeHashTagReqDto) {
+        return hashTagDao.save(HashTag.toEntity(makeHashTagReqDto));
     }
 
     /**
      * 해시태그 조회 사용자 입력으로 시작하는 태그 모두 조회
+     * 입력값이 없는경우 조회하지 않음
      */
 
     public List<HashTag> getHashTags(String input) {
         log.info("해시태그 조회, 조회 입력값: {}",input);
+        if (input.length() <= 0) {
+            return List.of();
+        }
         return hashTagDao.findByTagNameContaining(input);
     }
 
