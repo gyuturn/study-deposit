@@ -42,10 +42,10 @@
             <v-text-field v-model="deposit" label="보증금" type="number" min="0" :rules="[positiveRule]" ></v-text-field>
           </v-col>
           <v-col cols="12" md="6" class="text-center flex-column"> 
-            <HashTag />
+            <HashTag :myTags="hashTags" @updateHashTags="updateHashTags"/>
           </v-col>
           <v-col cols="12" md="6" class="text-center flex-column main-btn">
-            <v-btn @click="updateNickname">변경</v-btn>
+            <v-btn @click="post">등록하기</v-btn>
           </v-col>
           <v-col cols="12" md="6" class="text-center flex-column main-btn">
             <v-btn @click="goHome">다음에 하기</v-btn>
@@ -77,21 +77,55 @@ export default {
       attendanceTypes: [{ text: "시간 내 출석체크", value: "AttendanceCheck" }],
       title: "",
       selectedTime: '',
-      attendanceTime: {
-        hour: "",
-        minute: "",
-        second: "",
-      },
+      attendanceTime: '',
+      hashTags: '',
     };
   },
   methods: {
     changeTimeFormat() {
       const timeObj = new Date(`2000-01-01T${this.selectedTime}:00`);
-      this.attendanceTime.hour = timeObj.getHours();
-      this.attendanceTime.minute = timeObj.getMinutes();
-      this.attendanceTime.second = timeObj.getSeconds();
+      this.attendanceTime+=timeObj.getHours();
+      this.attendanceTime+=":"+timeObj.getMinutes();
+      this.attendanceTime+=":00";
       
       console.log(this.attendanceTime)
+    },
+    updateHashTags(data) {
+      this.hashTags = data;
+    },
+    goHome() {
+      this.$router.push({ path: "/studyroom" });
+    },
+    post(){
+      // 서버에 스터디방 데이터를 보내고, 201  받으면 리다이렉트합니다.
+      axios({
+        method: "post", // [요청 타입]
+        url: `${import.meta.env.VITE_API_URI}/studyroom`, // [요청 주소]
+        data: JSON.stringify({ 
+          title: this.title,
+          attendanceType: 'AttendanceCheck',
+          attendanceTime: this.attendanceTime,
+          endDate: this.endDate,
+          personCapacity: this.personCapacity,
+          deposit: this.deposit,
+          hashTags: this.hashTags,
+          }), // [요청 데이터]
+          
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        },
+        withCredentials: true,
+      })
+        .then((response) => {
+          if (response.status === 201) {
+            this.$router.push({ path: "/studyroom/success" });
+          } else {
+            this.$router.push({ path: "/error" });
+          }
+        })
+        .catch(function (error) {
+          this.$router.push({ path: "/error" });
+        });
     }
   },
 
