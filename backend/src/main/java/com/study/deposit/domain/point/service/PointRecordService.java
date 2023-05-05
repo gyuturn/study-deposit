@@ -1,6 +1,7 @@
 package com.study.deposit.domain.point.service;
 
 import com.study.deposit.domain.point.dao.PointRecordDao;
+import com.study.deposit.domain.point.domain.PaymentType;
 import com.study.deposit.domain.point.domain.PointRecord;
 import com.study.deposit.domain.point.dto.PointRecordPrepareDto;
 import com.study.deposit.domain.user.domain.Users;
@@ -32,12 +33,24 @@ public class PointRecordService {
         return sum;
     }
 
-    //금액 충전
+    /**
+     * 금액 충전
+     */
     @Transactional
-    public void insertRecord(Users users, PointRecordPrepareDto pointRecordPrepareDto) {
-        PointRecord newPointRecord = PointRecord.makePointRecord(users, pointRecordPrepareDto);
+    public void insertRecord(Users users, PointRecordPrepareDto pointRecordPrepareDto, PaymentType paymentType) {
+        PointRecord newPointRecord = PointRecord.makePointRecord(users, pointRecordPrepareDto,paymentType);
         pointRecordDao.save(newPointRecord);
         log.info("{}의 충전 point:{}", users.getNickName(), pointRecordPrepareDto.getAmount());
+    }
+
+    /**
+     * 포인트가 차감될때 해당 메서드 사용
+     */
+    @Transactional
+    public void insertRecord(Users users, Long paymentAmount, PaymentType paymentType) {
+        PointRecord newPointRecord = PointRecord.makePointRecord(users, paymentAmount,paymentType);
+        pointRecordDao.save(newPointRecord);
+        log.info("{}의 사용 포인트 point:{}", users.getNickName(), paymentAmount);
     }
 
     @Transactional
@@ -45,7 +58,6 @@ public class PointRecordService {
         log.info("pointRecord 삭제: {}", pointRecord.getMerchant_uid());
         pointRecordDao.delete(pointRecord);
     }
-
 
 
     //금액 id로 찾기
@@ -57,4 +69,5 @@ public class PointRecordService {
         }
         return pointRecord.get();
     }
+
 }

@@ -1,5 +1,6 @@
 package com.study.deposit.domain.point.controller;
 
+import com.study.deposit.domain.point.domain.PaymentType;
 import com.study.deposit.domain.point.domain.PointRecord;
 import com.study.deposit.domain.point.dto.PointRecordCompleteDto;
 import com.study.deposit.domain.point.dto.PointRecordPrepareDto;
@@ -80,7 +81,7 @@ public class KaKaoPayController implements PointRecordController {
         try {
             String token = iamPortService.getToken();
             iamPortService.paymentPrepare(dto, token);
-            pointRecordService.insertRecord(authService.getUser(), dto);
+            pointRecordService.insertRecord(authService.getUser(), dto, PaymentType.CHARGE);
         } catch (Exception e) {
             ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(CommonResponse.toResponse(IamPortErrorCode.UNAUTHORIZED_TOKEN));

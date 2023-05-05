@@ -1,8 +1,6 @@
 package com.study.deposit.domain.point.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -14,26 +12,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.study.deposit.domain.point.domain.PaymentType;
 import com.study.deposit.domain.point.domain.PointRecord;
 import com.study.deposit.domain.point.dto.PointRecordCompleteDto;
 import com.study.deposit.domain.point.dto.PointRecordPrepareDto;
 import com.study.deposit.domain.point.dto.PointRecordResultDto;
 import com.study.deposit.domain.point.service.IamPortService;
 import com.study.deposit.domain.point.service.PointRecordService;
-import com.study.deposit.domain.user.controller.UsersController;
 import com.study.deposit.domain.user.domain.LoginType;
 import com.study.deposit.domain.user.domain.Role;
 import com.study.deposit.domain.user.domain.Users;
 import com.study.deposit.domain.user.service.AuthService;
 import com.study.deposit.global.config.annotation.WithAuthUser;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -41,12 +36,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @WebMvcTest(controllers = KaKaoPayController.class)
 @ExtendWith(MockitoExtension.class)
@@ -92,7 +83,7 @@ class KaKaoPayControllerTest {
         //verify parameter
         verify(iamPortService).getToken();
         verify(iamPortService).paymentPrepare(testDto, testToken);
-        verify(pointRecordService).insertRecord(testUser, testDto);
+        verify(pointRecordService).insertRecord(testUser, testDto, PaymentType.CHARGE);
     }
 
     private Users makeTestUser() {
@@ -131,8 +122,10 @@ class KaKaoPayControllerTest {
         PointRecord pointRecordInDb = PointRecord.builder()
                 .merchant_uid(testDto.getMerchant_uid())
                 .users(makeTestUser())
-                .chargeDate(LocalDateTime.now())
-                .chargeAmount(actualCharge).build();
+                .paymentDate(LocalDateTime.now())
+                .chargeAmount(actualCharge)
+                .paymentType(PaymentType.CHARGE)
+                .build();
 
         when(pointRecordService.findByMerchantId(testDto.getMerchant_uid())).thenReturn(pointRecordInDb);
         when(iamPortService.validPayment(pointRecordResultDto.getChargeAmount(), pointRecordInDb)).thenReturn(true);
