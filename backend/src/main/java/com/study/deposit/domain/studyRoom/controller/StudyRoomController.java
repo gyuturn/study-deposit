@@ -50,9 +50,11 @@ public class StudyRoomController {
     @PostMapping
     public ResponseEntity<CommonResponse> createStudyRoom(@RequestBody @Valid StudyRoomMakingReqDto reqDto) {
         studyRoomService.makeStudyRoom(reqDto);
-//        studyRoomService.enterStudyRoom(reqDto.getDeposit()); //스터디방 입장(보증금 포인트 차감)
+//        studyRoomService.enterStudyRoom(reqDto.getDeposit()); //스터디방 입장(보증금 포인트 차감) -> makeStudyRoom에 포함
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(CommonResponse.toResponse(CommonCode.CREATED));
     }
+
+
 }

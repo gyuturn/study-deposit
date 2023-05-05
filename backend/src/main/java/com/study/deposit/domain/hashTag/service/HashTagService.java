@@ -8,7 +8,6 @@ import com.study.deposit.domain.hashTag.dto.MakeHashTagReqDto;
 import com.study.deposit.domain.studyRoom.domain.StudyRoom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,8 +36,21 @@ public class HashTagService {
      * 해시태그 생성
      */
     @Transactional
-    public void makeHashTag(MakeHashTagReqDto makeHashTagReqDto) {
-        hashTagDao.save(HashTag.toEntity(makeHashTagReqDto));
+    public HashTag makeHashTag(MakeHashTagReqDto makeHashTagReqDto) {
+        return hashTagDao.save(HashTag.toEntity(makeHashTagReqDto));
+    }
+
+    /**
+     * 해시태그 조회 사용자 입력으로 시작하는 태그 모두 조회
+     * 입력값이 없는경우 조회하지 않음
+     */
+
+    public List<HashTag> getHashTags(String input) {
+        log.info("해시태그 조회, 조회 입력값: {}",input);
+        if (input.length() <= 0) {
+            return List.of();
+        }
+        return hashTagDao.findByTagNameContaining(input);
     }
 
     private boolean isDupHashTag(String tagName) {
