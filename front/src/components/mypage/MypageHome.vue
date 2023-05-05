@@ -60,7 +60,6 @@ export default {
         withCredentials: true, // Include cookies in the request
       })
       .then((response) => {
-        console.log(response.status);
 
         if (response.status === 200) {
           this.nickname = response.data.data.nickName;
