@@ -5,29 +5,16 @@
       label="해시태그를 입력하세요"
       @input="fetchTagsDelayed"
     />
-    <v-chip
-      v-for="(tag, index) in tags"
-      :key="index"
-      @click="selectTag(tag)"
-    >
-      {{ tag }}
+    <v-chip v-for="(tag, index) in tags" :key="index" @click="selectTag(tag)">
+      {{ tag.tagName }}
     </v-chip>
-    <v-btn
-      v-if="!tags.length"
-      color="primary"
-      @click="createTag"
-    >
+    <v-btn v-if="!tags.length" color="primary" @click="createTag">
       새로 만들기
     </v-btn>
-    <br>
-    <br>
-    <v-chip
-      v-for="(tag, index) in myTags"
-      :key="index"
-      outlined
-      color="red"
-    >
-      {{ tag }}
+    <br />
+    <br />
+    <v-chip v-for="(tag, index) in myTags" :key="index" outlined color="red">
+      {{ tag.tagName }}
     </v-chip>
   </v-container>
 </template>
@@ -58,7 +45,7 @@ export default {
               }
             )
             .then((response) => {
-              this.tags = response.data.data.map((tag) => tag.tagName);
+              this.tags = response.data.data;
             })
             .catch((error) => {
               console.error(error);
@@ -81,7 +68,7 @@ export default {
           }
         )
         .then((response) => {
-          this.myTags.push(this.inputText);
+          this.myTags.push(response.data.data);
           this.inputText = "";
         })
         .catch((error) => {
@@ -89,7 +76,11 @@ export default {
         });
     },
     selectTag(tag) {
-      this.myTags.push(tag);
+      console.log(tag);
+      // 중복 검사
+      if (!this.myTags.some((t) => t.id === tag.id)) {
+        this.myTags.push(tag);
+      }
     },
   },
 };
