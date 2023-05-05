@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.Data;
@@ -16,6 +18,7 @@ public class StudyRoomMakingReqDto {
     @NotNull
     private String title;
     @NotNull
+    @Enumerated(EnumType.STRING)
     private AttendanceType attendanceType;
     @NotNull
     @DateTimeFormat(pattern = "HH:mm:ss")
