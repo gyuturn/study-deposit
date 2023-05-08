@@ -50,6 +50,7 @@ public class StudyRoomInfoResDto {
         }
         studyRoomInfoResDto.setCurrentOccupancy(currentOccupancy);
         studyRoomInfoResDto.setStartDate(studyRoom.getCreateDate().toLocalDate());
+        studyRoomInfoResDto.setDeposit(studyRoom.getDeposit());
         return studyRoomInfoResDto;
     }
 
