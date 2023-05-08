@@ -18,6 +18,7 @@ import com.study.deposit.domain.studyRoom.dao.UserStudyRoomDao;
 import com.study.deposit.domain.studyRoom.domain.AttendanceType;
 import com.study.deposit.domain.studyRoom.domain.StudyRoom;
 import com.study.deposit.domain.studyRoom.domain.UserStudyRoom;
+import com.study.deposit.domain.studyRoom.dto.StudyRoomInfoResDto;
 import com.study.deposit.domain.studyRoom.dto.StudyRoomMakingReqDto;
 import com.study.deposit.domain.user.domain.LoginType;
 import com.study.deposit.domain.user.domain.Role;
@@ -27,7 +28,9 @@ import com.study.deposit.global.common.exception.payment.PaymentException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -138,4 +141,69 @@ class StudyRoomServiceTest {
         // Verify that the insertRecord method was called with the correct arguments
         verify(pointRecordService, times(1)).insertRecord(hostUser, deposit, PaymentType.PURCHASE);
     }
+
+    @Test
+    @DisplayName("스터디방 전체 조회")
+    void getStudyRoomList() {
+        // Create sample data
+        StudyRoom studyRoom1 = StudyRoom.builder()
+                .id(1L)
+                .deposit(1000L)
+                .attendanceTime(LocalTime.of(13, 0, 0))
+                .personCapacity(10L)
+                .attendanceType(AttendanceType.AttendanceCheck)
+                .title("testRoom1")
+                .createDate(LocalDateTime.now())
+                .endDate(LocalDate.of(2100, 12, 03))
+                .build();
+
+        StudyRoom studyRoom2 = StudyRoom.builder()
+                .id(1L)
+                .deposit(1000L)
+                .attendanceTime(LocalTime.of(13, 0, 0))
+                .personCapacity(10L)
+                .attendanceType(AttendanceType.AttendanceCheck)
+                .title("testRoom2")
+                .createDate(LocalDateTime.now())
+                .endDate(LocalDate.of(2100, 12, 03))
+                .build();
+
+        List<StudyRoom> studyRooms = new ArrayList<>();
+        studyRooms.add(studyRoom1);
+        studyRooms.add(studyRoom2);
+
+        List<HashTag> hashTags1 = new ArrayList<>();
+        hashTags1.add(HashTag.builder()
+                .id(11L)
+                .tagName("tag1").build());
+        hashTags1.add(HashTag.builder()
+                .id(11L)
+                .tagName("tag1").build());
+
+        List<HashTag> hashTags2 = new ArrayList<>();
+        hashTags2.add(HashTag.builder()
+                .id(21L)
+                .tagName("tag11").build());
+        hashTags2.add(HashTag.builder()
+                .id(22L)
+                .tagName("tag12").build());
+
+        when(studyRoomDao.findAllByOrderByCreateDateDesc()).thenReturn(studyRooms);
+        when(hashTagService.getHashTagsByStudyRoom(studyRoom1)).thenReturn(hashTags1);
+        when(hashTagService.getHashTagsByStudyRoom(studyRoom2)).thenReturn(hashTags2);
+
+        // Call the method under test
+        List<StudyRoomInfoResDto> result = studyRoomService.getStudyRoomList();
+
+        // Verify the expected behavior
+        verify(studyRoomDao).findAllByOrderByCreateDateDesc();
+        verify(hashTagService).getHashTagsByStudyRoom(studyRoom1);
+        verify(hashTagService).getHashTagsByStudyRoom(studyRoom2);
+        assertEquals(2, result.size()); // Assert the size of the returned list
+        // Assert the properties of the first StudyRoomInfoResDto
+        assertEquals("testRoom1", result.get(0).getTitle());
+        // Assert the properties of the second StudyRoomInfoResDto
+        assertEquals("testRoom2", result.get(1).getTitle());
+    }
+
 }
