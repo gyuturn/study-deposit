@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,6 +55,21 @@ public class StudyRoomController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(CommonResponse.toResponse(CommonCode.CREATED));
+    }
+
+    @Operation(summary = "스터디방 조회 api", description = "메인 페이지에서 스터디방 리스트를 조회하는 API"
+            + "추후 Pageable가능성 고려")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "정상 생성"),
+                    @ApiResponse(responseCode = "401", description = "사용자 확인 불가"),
+            }
+    )
+    @GetMapping
+    public ResponseEntity<CommonResponse> getStudyRoomList() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.toResponse(CommonCode.OK,studyRoomService.getStudyRoomList()));
     }
 
 

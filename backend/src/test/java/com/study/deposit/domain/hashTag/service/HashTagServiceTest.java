@@ -76,4 +76,43 @@ class HashTagServiceTest {
         verify(studyRoomHashTagDao, times(1)).saveAll(Mockito.any(List.class));
 
     }
+
+    @Test
+    @DisplayName("해당 스터디방에 존재하는 해시태그 조회")
+    void testGetHashTagsByStudyRoom() {
+        // Create a StudyRoom object for testing
+        StudyRoom studyRoom = StudyRoom.builder()
+                .id(1L)
+                .deposit(1000L)
+                .attendanceTime(LocalTime.of(13, 0, 0))
+                .personCapacity(10L)
+                .attendanceType(AttendanceType.AttendanceCheck)
+                .title("testRoom")
+                .createDate(LocalDateTime.now())
+                .endDate(LocalDate.of(2100, 12, 03))
+                .build();
+
+        // Create sample data
+        HashTag tag1 = HashTag.builder()
+                .id(11L)
+                .tagName("tag1").build();
+        HashTag tag2 = HashTag.builder()
+                .id(12L)
+                .tagName("tag2").build();
+        List<StudyRoomHashTag> studyRoomHashTags = new ArrayList<>();
+        studyRoomHashTags.add(new StudyRoomHashTag(100L,studyRoom, tag1));
+        studyRoomHashTags.add(new StudyRoomHashTag(101L,studyRoom, tag2));
+
+        // Mock the behavior of studyRoomHashTagDao.findByStudyRoom(studyRoom)
+        when(studyRoomHashTagDao.findByStudyRoom(studyRoom)).thenReturn(studyRoomHashTags);
+
+        // Call the method under test
+        List<HashTag> result = hashTagService.getHashTagsByStudyRoom(studyRoom);
+
+        // Verify the expected behavior
+        verify(studyRoomHashTagDao).findByStudyRoom(studyRoom);
+        assertEquals(2, result.size()); // Assert the size of the returned list
+        assertEquals("tag1", result.get(0).getTagName()); // Assert the first element in the list
+        assertEquals("tag2", result.get(1).getTagName()); // Assert the second element in the list
+    }
 }

@@ -76,7 +76,6 @@ export default {
         });
     },
     selectTag(tag) {
-      console.log(tag);
       // 중복 검사
       if (!this.myTags.some((t) => t.id === tag.id)) {
         this.myTags.push(tag);

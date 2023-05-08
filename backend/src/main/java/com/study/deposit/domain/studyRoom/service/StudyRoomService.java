@@ -1,18 +1,21 @@
 package com.study.deposit.domain.studyRoom.service;
 
+import com.study.deposit.domain.hashTag.domain.HashTag;
 import com.study.deposit.domain.hashTag.service.HashTagService;
 import com.study.deposit.domain.point.domain.PaymentType;
-import com.study.deposit.domain.point.dto.PointRecordPrepareDto;
 import com.study.deposit.domain.point.service.PointRecordService;
 import com.study.deposit.domain.studyRoom.dao.StudyRoomDao;
 import com.study.deposit.domain.studyRoom.dao.UserStudyRoomDao;
 import com.study.deposit.domain.studyRoom.domain.StudyRoom;
 import com.study.deposit.domain.studyRoom.domain.UserStudyRoom;
+import com.study.deposit.domain.studyRoom.dto.StudyRoomInfoResDto;
 import com.study.deposit.domain.studyRoom.dto.StudyRoomMakingReqDto;
 import com.study.deposit.domain.user.domain.Users;
 import com.study.deposit.domain.user.service.AuthService;
 import com.study.deposit.global.common.code.studyroom.StudyRoomErrorCode;
 import com.study.deposit.global.common.exception.payment.PaymentException;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -63,7 +66,7 @@ public class StudyRoomService {
         checkValidEnterRoom(studyRoomsDeposit, sumRecordByEnterUser);
         //포인트 사용(마이너스 주의!!)
         pointRecordService.insertRecord(enterUser, -studyRoomsDeposit, PaymentType.PURCHASE);
-        log.info("스터디방 입장, 포인트 차감:{}",studyRoomsDeposit);
+        log.info("스터디방 입장, 포인트 차감:{}", studyRoomsDeposit);
     }
 
     private void checkValidEnterRoom(Long studyRoomsDeposit, Long sumRecordByEnterUser) {
@@ -72,6 +75,28 @@ public class StudyRoomService {
             log.error("스터디방 입장, 포인트 부족, 보유포인트:{}, 보증금:{}", sumRecordByEnterUser, studyRoomsDeposit);
             throw new PaymentException(StudyRoomErrorCode.NOT_ENOUGH_POINT_FOR_DEPOSIT, HttpStatus.PAYMENT_REQUIRED);
         }
+    }
+
+    /**
+     * 스터디방 리스트 조회(메인 홈페이지에서 사용) 생성날짜 기준으로 최근날짜 순으로 정렬 추후 필요하면 Page기능 추가?
+     */
+    public List<StudyRoomInfoResDto> getStudyRoomList() {
+        log.info("스터디방 전체 조회");
+        List<StudyRoomInfoResDto> studyRoomDtoList = new ArrayList<>();
+        List<StudyRoom> studyRooms = studyRoomDao.findAllByOrderByCreateDateDesc();
+        for (StudyRoom studyRoom : studyRooms) {
+            studyRoomDtoList.add(StudyRoomInfoResDto.getEntity(
+                    studyRoom,
+                    hashTagService.getHashTagsByStudyRoom(studyRoom),
+                    getNowOccupancy(studyRoom)));
+        }
+        return studyRoomDtoList;
+
+    }
+
+    //특정 스터디방에 현재 참가중인 인원 조회
+    private Long getNowOccupancy(StudyRoom studyRoom) {
+        return Long.valueOf(userStudyRoomDao.findByStudyRoom(studyRoom).size());
     }
 
 

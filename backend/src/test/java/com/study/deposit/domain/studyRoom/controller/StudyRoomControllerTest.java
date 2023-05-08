@@ -2,9 +2,12 @@ package com.study.deposit.domain.studyRoom.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.RequestEntity.post;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -12,6 +15,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.study.deposit.domain.hashTag.domain.HashTag;
 import com.study.deposit.domain.studyRoom.domain.AttendanceType;
+import com.study.deposit.domain.studyRoom.dto.StudyRoomInfoResDto;
 import com.study.deposit.domain.studyRoom.dto.StudyRoomMakingReqDto;
 import com.study.deposit.domain.studyRoom.service.StudyRoomService;
 import com.study.deposit.domain.user.controller.AuthController;
@@ -21,7 +25,9 @@ import com.study.deposit.global.common.code.CommonCode;
 import com.study.deposit.global.config.annotation.WithAuthUser;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -38,6 +44,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -104,5 +111,29 @@ class StudyRoomControllerTest {
         dto.setHashTags(Arrays.asList(new HashTag(1L, "tag")));
         dto.setEndDate((LocalDate) jsonObject.get("endDate"));
         return dto;
+    }
+
+    @Test
+    @WithAuthUser(email = "test@naver.com", role = "ROLE_USER")
+    @DisplayName("스터디방 전체 조회")
+    void getStudyRoomList() throws Exception {
+        // Create sample data
+        StudyRoomInfoResDto studyRoom1 = new StudyRoomInfoResDto();
+        StudyRoomInfoResDto studyRoom2 = new StudyRoomInfoResDto();
+
+        List<StudyRoomInfoResDto> studyRoomList = new ArrayList<>();
+        studyRoomList.add(studyRoom1);
+        studyRoomList.add(studyRoom2);
+
+        when(studyRoomService.getStudyRoomList()).thenReturn(studyRoomList);
+
+        // Perform GET request to the endpoint
+        mockMvc.perform(get("/api/v1/studyroom")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        // Verify the expected behavior
+        verify(studyRoomService).getStudyRoomList();
     }
 }
