@@ -9,6 +9,7 @@ import KakaoPayment from "@/components/mypage/payment/kakaopay/KakaoPayment.vue"
 import PaymentResult from "@/components/mypage/payment/PaymentResult.vue"
 
 import PostStudyRoom from "@/components/study_room/PostStudyRoom.vue"
+import MainStudyList from "@/components/study_room/MainStudyList.vue"
 const router = createRouter({
     history : createWebHistory(),
     routes : [ // path별 component를 추가한다.
@@ -25,6 +26,7 @@ const router = createRouter({
         { path : "/payment/result", name : "PaymentResult", component : PaymentResult },
 
         { path : "/studyroom/post", name : "PostStudyRoom", component : PostStudyRoom },
+        { path : "/studyroom/list", name : "MainStudyList", component : MainStudyList },
     ]
 });
 
