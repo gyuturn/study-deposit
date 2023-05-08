@@ -53,6 +53,20 @@ public class HashTagService {
         return hashTagDao.findByTagNameContaining(input);
     }
 
+    /**
+     * 해당 스터디방에 존재하는 해시태그 리스트를 가지고옴
+     * @param studyRoom
+     * @return 해당 스터디방에 존재하는 해시태그
+     */
+    public List<HashTag> getHashTagsByStudyRoom(StudyRoom studyRoom) {
+        List<HashTag> tagsForStudyRoom = new ArrayList<>();
+        List<StudyRoomHashTag> studyRoomHashTagDaoByStudyRoom = studyRoomHashTagDao.findByStudyRoom(studyRoom);
+        for (StudyRoomHashTag studyRoomHashTag : studyRoomHashTagDaoByStudyRoom) {
+            tagsForStudyRoom.add(studyRoomHashTag.getHashTag());
+        }
+        return tagsForStudyRoom;
+    }
+
     private boolean isDupHashTag(String tagName) {
         return hashTagDao.findByTagName(tagName).isPresent();
     }
