@@ -138,7 +138,7 @@ export default {
       })
         .then((response) => {
           if (response.status === 201) {
-            this.$router.push({ path: "/studyroom/success" });
+            this.$router.push({ path: "/studyroom/list" });
           } else {
             this.$router.push({ path: "/error" });
           }
