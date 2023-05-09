@@ -99,7 +99,7 @@ export default {
       title: "",
       selectedTime: "",
       attendanceTime: "",
-      hashTags: "",
+      hashTags: [],
     };
   },
   methods: {
@@ -128,7 +128,7 @@ export default {
           endDate: this.endDate,
           personCapacity: this.personCapacity,
           deposit: this.deposit,
-          hashTags: this.hashTags,
+          hashTags: this.hashTags
         }), // [요청 데이터]
 
         headers: {
