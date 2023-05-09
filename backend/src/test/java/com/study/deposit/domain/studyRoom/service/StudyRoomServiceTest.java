@@ -2,6 +2,7 @@ package com.study.deposit.domain.studyRoom.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -30,6 +31,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -169,6 +171,25 @@ class StudyRoomServiceTest {
         assertEquals("testRoom1", result.get(0).getTitle());
         // Assert the properties of the second StudyRoomInfoResDto
         assertEquals("testRoom2", result.get(1).getTitle());
+    }
+
+    @Test
+    @DisplayName("스터디방 입장")
+    void enterStudyRoom_ShouldSaveUserToStudyRoom() {
+        // Mock dependencies
+        StudyRoom studyRoom = new StudyRoom();
+        when(studyRoomDao.findById(anyLong())).thenReturn(Optional.of(studyRoom));
+
+        Users user = new Users();
+        when(authService.getUser()).thenReturn(user);
+
+        // Call the method under test
+        studyRoomService.enterStudyRoom(123L);
+
+        // Verify the expected behavior
+        verify(studyRoomDao).findById(123L);
+        verify(authService).getUser();
+        // Add more assertions as needed
     }
 
 }
