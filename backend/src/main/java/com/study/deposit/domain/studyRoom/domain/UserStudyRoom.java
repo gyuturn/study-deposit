@@ -39,11 +39,11 @@ public class UserStudyRoom {
     private StudyRoomRole studyRoomRole;
 
     //호스트가 방을 만들때만 사용가능
-    public static UserStudyRoom toEntityForHost(StudyRoom studyRoom, Users host) {
+    public static UserStudyRoom toEntityForHost(StudyRoom studyRoom, Users host,StudyRoomRole studyRoomRole) {
         return UserStudyRoom.builder()
                 .studyRoom(studyRoom)
                 .users(host)
-                .studyRoomRole(StudyRoomRole.HOST)
+                .studyRoomRole(studyRoomRole)
                 .build();
     }
 

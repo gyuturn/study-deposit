@@ -55,4 +55,10 @@ public class Users extends BaseTimeEntity implements Serializable {
         return this;
     }
 
+    //basetimeEntity때문에 overrride가 안됨
+    public  boolean isEqualUser(Users o) {
+        return this.getId().equals(o.getId());
+    }
+
+
 }

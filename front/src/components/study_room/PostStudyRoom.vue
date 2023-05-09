@@ -99,7 +99,7 @@ export default {
       title: "",
       selectedTime: "",
       attendanceTime: "",
-      hashTags: "",
+      hashTags: [],
     };
   },
   methods: {
@@ -128,7 +128,7 @@ export default {
           endDate: this.endDate,
           personCapacity: this.personCapacity,
           deposit: this.deposit,
-          hashTags: this.hashTags,
+          hashTags: this.hashTags
         }), // [요청 데이터]
 
         headers: {
@@ -138,7 +138,7 @@ export default {
       })
         .then((response) => {
           if (response.status === 201) {
-            this.$router.push({ path: "/studyroom/success" });
+            this.$router.push({ path: "/studyroom/list" });
           } else {
             this.$router.push({ path: "/error" });
           }

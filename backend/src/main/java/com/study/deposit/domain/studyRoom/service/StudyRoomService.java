@@ -1,19 +1,18 @@
 package com.study.deposit.domain.studyRoom.service;
 
-import com.study.deposit.domain.hashTag.domain.HashTag;
 import com.study.deposit.domain.hashTag.service.HashTagService;
-import com.study.deposit.domain.point.domain.PaymentType;
 import com.study.deposit.domain.point.service.PointRecordService;
 import com.study.deposit.domain.studyRoom.dao.StudyRoomDao;
 import com.study.deposit.domain.studyRoom.dao.UserStudyRoomDao;
 import com.study.deposit.domain.studyRoom.domain.StudyRoom;
+import com.study.deposit.domain.studyRoom.domain.StudyRoomRole;
 import com.study.deposit.domain.studyRoom.domain.UserStudyRoom;
 import com.study.deposit.domain.studyRoom.dto.StudyRoomInfoResDto;
 import com.study.deposit.domain.studyRoom.dto.StudyRoomMakingReqDto;
 import com.study.deposit.domain.user.domain.Users;
 import com.study.deposit.domain.user.service.AuthService;
 import com.study.deposit.global.common.code.studyroom.StudyRoomErrorCode;
-import com.study.deposit.global.common.exception.payment.PaymentException;
+import com.study.deposit.global.common.exception.studyroom.StudyRoomException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -46,36 +45,82 @@ public class StudyRoomService {
         log.info("스터디방에 적용되는 해시태그 매핑 완료");
         //방장을 스터디방에 저장
         Users host = authService.getUser();
-        insertUserToStudyRoom(savedStudyRoom, host);
-        enterStudyRoom(savedStudyRoom.getDeposit());
+        insertUserToStudyRoom(savedStudyRoom, host, StudyRoomRole.HOST);
+        pointRecordService.calEnterRoom(savedStudyRoom.getDeposit());
         log.info("스터디방 생성 후, 방장을 스터디방에 입장");
     }
 
-    private void insertUserToStudyRoom(StudyRoom studyRoom, Users user) {
-        userStudyRoomDao.save(UserStudyRoom.toEntityForHost(studyRoom, user));
+    private void insertUserToStudyRoom(StudyRoom studyRoom, Users user, StudyRoomRole studyRoomRole) {
+        userStudyRoomDao.save(UserStudyRoom.toEntityForHost(studyRoom, user, studyRoomRole));
     }
 
     /**
-     * 스터디방 입장(방 만들때도 공통 사용) 입장시 금액이 부족하면 402 에러
+     * 스터디방 입장 입장시 금액이 부족하면 402 에러 일반 User 전용 이미 들어가 있는 방이면 에러 처리
      */
-    public void enterStudyRoom(Long studyRoomsDeposit) {
+    public void enterStudyRoom(Long studyRoomId) {
+        StudyRoom studyRoom = studyRoomDao.findById(studyRoomId).get();
         Users enterUser = authService.getUser();
-        Long sumRecordByEnterUser = pointRecordService.getSumRecordByUser(enterUser);
 
-        //스터디 보증금, 사용자 보유 포인트 비교
-        checkValidEnterRoom(studyRoomsDeposit, sumRecordByEnterUser);
-        //포인트 사용(마이너스 주의!!)
-        pointRecordService.insertRecord(enterUser, -studyRoomsDeposit, PaymentType.PURCHASE);
-        log.info("스터디방 입장, 포인트 차감:{}", studyRoomsDeposit);
+        //이미 해당 유저가 방에 들어가있는지 확인
+        checkAlreadyEnteredRoom(studyRoom, enterUser);
+
+        pointRecordService.calEnterRoom(studyRoom.getDeposit()); //포인트 계산
+        insertUserToStudyRoom(studyRoom, enterUser, StudyRoomRole.USER); //인원 계싼
+        log.info("스터디방 입장");
+        log.info("스터디방:{}, 입장유저:{}", studyRoom.getId(), enterUser.getId());
     }
 
-    private void checkValidEnterRoom(Long studyRoomsDeposit, Long sumRecordByEnterUser) {
-        if ((sumRecordByEnterUser < studyRoomsDeposit)) {
-            //유저가 입장 보증금보다 작은 포인트를 가진 경우 예외 터트리기
-            log.error("스터디방 입장, 포인트 부족, 보유포인트:{}, 보증금:{}", sumRecordByEnterUser, studyRoomsDeposit);
-            throw new PaymentException(StudyRoomErrorCode.NOT_ENOUGH_POINT_FOR_DEPOSIT, HttpStatus.PAYMENT_REQUIRED);
+    private void checkAlreadyEnteredRoom(StudyRoom studyRoom, Users enterUser) {
+        List<UserStudyRoom> userStudyRooms = userStudyRoomDao.findByStudyRoom(studyRoom);
+        for (UserStudyRoom userStudyRoom : userStudyRooms) {
+            if (enterUser.isEqualUser(userStudyRoom.getUsers())) {
+                throw new StudyRoomException(StudyRoomErrorCode.ALREADY_ENTER_ROOM, HttpStatus.CONFLICT);
+            }
         }
     }
+
+    private List<StudyRoom> removeEnteredRoom(List<StudyRoom> studyRooms, Users enterUser) {
+        List<StudyRoom> removedStudyRooms = new ArrayList<>();
+        for (StudyRoom studyRoom : studyRooms) {
+            boolean enterFlag = false;
+            List<UserStudyRoom> userStudyRooms = userStudyRoomDao.findByStudyRoom(studyRoom);
+            for (UserStudyRoom userStudyRoom : userStudyRooms) {
+                if (enterUser.isEqualUser(userStudyRoom.getUsers())) {
+                    enterFlag = true;
+                    break;
+                }
+            }
+            if(enterFlag==false){
+                removedStudyRooms.add(studyRoom);
+            }
+        }
+        log.info("자신이 속한방은 조회에서 제외");
+        return removedStudyRooms;
+    }
+
+    private List<StudyRoom> removeFullCapacity(List<StudyRoom> studyRooms) {
+        List<StudyRoom> removedStudyRooms = new ArrayList<>();
+        for (StudyRoom studyRoom : studyRooms) {
+            int nowAttendance = userStudyRoomDao.findByStudyRoom(studyRoom).size();
+            if (studyRoom.getPersonCapacity() > nowAttendance) {
+                removedStudyRooms.add(studyRoom);
+            }
+        }
+        log.info("꽉찬 방은 조회에서 제외");
+        return removedStudyRooms;
+
+    }
+
+    private List<StudyRoom> findAvailableRooms() {
+        List<StudyRoom> studyRooms = studyRoomDao.findAllByOrderByCreateDateDesc();
+
+        //이미 들어가있는 방은 삭제
+        List<StudyRoom> notIncludeOwn = removeEnteredRoom(studyRooms, authService.getUser());
+
+        //인원이 꽉찬 방은 삭제
+        return removeFullCapacity(notIncludeOwn);
+    }
+
 
     /**
      * 스터디방 리스트 조회(메인 홈페이지에서 사용) 생성날짜 기준으로 최근날짜 순으로 정렬 추후 필요하면 Page기능 추가?
@@ -83,8 +128,8 @@ public class StudyRoomService {
     public List<StudyRoomInfoResDto> getStudyRoomList() {
         log.info("스터디방 전체 조회");
         List<StudyRoomInfoResDto> studyRoomDtoList = new ArrayList<>();
-        List<StudyRoom> studyRooms = studyRoomDao.findAllByOrderByCreateDateDesc();
-        for (StudyRoom studyRoom : studyRooms) {
+        List<StudyRoom> availableRooms = findAvailableRooms();
+        for (StudyRoom studyRoom : availableRooms) {
             studyRoomDtoList.add(StudyRoomInfoResDto.getEntity(
                     studyRoom,
                     hashTagService.getHashTagsByStudyRoom(studyRoom),

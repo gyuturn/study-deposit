@@ -102,19 +102,29 @@ export default {
       this.isModalOpen = false;
     },
     enterRoom() {
-      if (this.usersPoint < this.selectedStudyRoom.deposit) {
-        axios
-          .get(`${import.meta.env.VITE_API_URI}/users`, {
-            withCredentials: true, // Include cookies in the request
-          })
-          .then((response) => {
-            if (response.status === 200) {
-              this.usersPoint = response.data.data.sumOfChargeAmount;
-            }
-          })
-          .catch((error) => {
+      if (this.usersPoint >= this.selectedStudyRoom.deposit) {
+        axios({
+        method: "post", // [요청 타입]
+        url: `${import.meta.env.VITE_API_URI}/studyroom/enter`, // [요청 주소]
+        data: JSON.stringify({
+          id:this.selectedStudyRoom.id
+        }), // [요청 데이터]
+
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        },
+        withCredentials: true,
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            this.$router.push({ path: "/studyroom/list" });
+          } else {
             this.$router.push({ path: "/error" });
-          });
+          }
+        })
+        .catch(function (error) {
+          this.$router.push({ path: "/error" });
+        });
       }else{
         this.insufficientPoints=true;
       }

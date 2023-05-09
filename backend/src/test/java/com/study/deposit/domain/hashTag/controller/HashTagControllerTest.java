@@ -51,9 +51,11 @@ class HashTagControllerTest {
     @DisplayName("해시태그 생성 API")
     public void testCreateHashTag() throws Exception {
         String requestBody = "{\"tagName\":\"test\"}";
+        HashTag newHashTag = HashTag.builder().id(1L).tagName("test").build();
+        MakeHashTagReqDto dto = new MakeHashTagReqDto();
+        dto.setTagName("test");
 
-        doNothing().when(hashTagService).makeHashTag(ArgumentMatchers.any(MakeHashTagReqDto.class));
-
+        when(hashTagService.makeHashTag(dto)).thenReturn(newHashTag);
         mockMvc.perform(post("/api/v1/hashtag")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)

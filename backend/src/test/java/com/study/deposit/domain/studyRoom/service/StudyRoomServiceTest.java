@@ -2,6 +2,7 @@ package com.study.deposit.domain.studyRoom.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -10,7 +11,6 @@ import static org.mockito.Mockito.when;
 
 import com.study.deposit.domain.hashTag.domain.HashTag;
 import com.study.deposit.domain.hashTag.service.HashTagService;
-import com.study.deposit.domain.point.dao.PointRecordDao;
 import com.study.deposit.domain.point.domain.PaymentType;
 import com.study.deposit.domain.point.service.PointRecordService;
 import com.study.deposit.domain.studyRoom.dao.StudyRoomDao;
@@ -31,6 +31,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -107,40 +108,6 @@ class StudyRoomServiceTest {
         return dto;
     }
 
-    @Test
-    @DisplayName("스터디방 입장 로직-실패 케이스")
-    public void testEnterStudyRoom_InsufficientFunds() {
-        Users hostUser = makeTestHostUser();
-
-        when(authService.getUser()).thenReturn(hostUser);
-        when(pointRecordService.getSumRecordByUser(hostUser)).thenReturn(1000L);
-
-        Long deposit = 5000L;
-
-        // Ensure that the PaymentException is thrown with the expected error code and status
-        Assertions.assertThrows(
-                PaymentException.class,
-                () -> {
-                    studyRoomService.enterStudyRoom(deposit);
-                }
-        );
-        verify(pointRecordService, never()).insertRecord(hostUser, deposit, PaymentType.PURCHASE);
-    }
-
-    @Test
-    @DisplayName("스터디방 입장 로직-성공 케이스")
-    public void testEnterStudyRoom_Valid() {
-        Users hostUser = makeTestHostUser();
-
-        when(authService.getUser()).thenReturn(hostUser);
-        when(pointRecordService.getSumRecordByUser(hostUser)).thenReturn(1000L);
-
-        Long deposit = 500L;
-        studyRoomService.enterStudyRoom(deposit);
-
-        // Verify that the insertRecord method was called with the correct arguments
-        verify(pointRecordService, times(1)).insertRecord(hostUser, deposit, PaymentType.PURCHASE);
-    }
 
     @Test
     @DisplayName("스터디방 전체 조회")
@@ -204,6 +171,25 @@ class StudyRoomServiceTest {
         assertEquals("testRoom1", result.get(0).getTitle());
         // Assert the properties of the second StudyRoomInfoResDto
         assertEquals("testRoom2", result.get(1).getTitle());
+    }
+
+    @Test
+    @DisplayName("스터디방 입장")
+    void enterStudyRoom_ShouldSaveUserToStudyRoom() {
+        // Mock dependencies
+        StudyRoom studyRoom = new StudyRoom();
+        when(studyRoomDao.findById(anyLong())).thenReturn(Optional.of(studyRoom));
+
+        Users user = new Users();
+        when(authService.getUser()).thenReturn(user);
+
+        // Call the method under test
+        studyRoomService.enterStudyRoom(123L);
+
+        // Verify the expected behavior
+        verify(studyRoomDao).findById(123L);
+        verify(authService).getUser();
+        // Add more assertions as needed
     }
 
 }
