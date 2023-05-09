@@ -5,7 +5,8 @@ import lombok.Getter;
 
 @Getter
 public enum StudyRoomErrorCode implements Code {
-    NOT_ENOUGH_POINT_FOR_DEPOSIT("STD001", "스터디방에 입장하기 위한 포인트가 부족합니다.(보증금보다 작은 포인트 보유)");
+    NOT_ENOUGH_POINT_FOR_DEPOSIT("STD001", "스터디방에 입장하기 위한 포인트가 부족합니다.(보증금보다 작은 포인트 보유)"),
+    ALREADY_ENTER_ROOM("STD002", "이미 입장한 스터디방입니다.");
     private String code;
     private String message;
 
