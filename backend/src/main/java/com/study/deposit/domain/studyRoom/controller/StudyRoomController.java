@@ -61,7 +61,7 @@ public class StudyRoomController {
             + "추후 Pageable가능성 고려")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "정상 생성"),
+                    @ApiResponse(responseCode = "200", description = "정상 처리"),
                     @ApiResponse(responseCode = "401", description = "사용자 확인 불가"),
             }
     )
@@ -71,6 +71,21 @@ public class StudyRoomController {
                 .status(HttpStatus.OK)
                 .body(CommonResponse.toResponse(CommonCode.OK,studyRoomService.getStudyRoomList()));
     }
+
+//    @Operation(summary = "스터디방 입장 api", description = "스터디방 입장시 요청하는 API")
+//    @ApiResponses(
+//            value = {
+//                    @ApiResponse(responseCode = "200", description = "정상 처리"),
+//                    @ApiResponse(responseCode = "401", description = "사용자 확인 불가"),
+//                    @ApiResponse(responseCode = "402", description = "방 입장을 위한 포인트 부족"),
+//            }
+//    )
+//    @GetMapping
+//    public ResponseEntity<CommonResponse> enterStudyRoom() {
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(CommonResponse.toResponse(CommonCode.OK,studyRoomService.getStudyRoomList()));
+//    }
 
 
 }

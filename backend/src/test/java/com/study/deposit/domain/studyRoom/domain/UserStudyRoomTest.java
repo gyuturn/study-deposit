@@ -35,7 +35,7 @@ class UserStudyRoomTest {
                 .nickName("testNickName")
                 .build();
         //when
-        UserStudyRoom userStudyRoom = UserStudyRoom.toEntityForHost(testStudyRoom, testUser);
+        UserStudyRoom userStudyRoom = UserStudyRoom.toEntityForHost(testStudyRoom, testUser,StudyRoomRole.HOST);
         //then
         assertThat(userStudyRoom.getUsers()).isEqualTo(testUser);
         assertThat(userStudyRoom.getStudyRoom()).isEqualTo(testStudyRoom);
