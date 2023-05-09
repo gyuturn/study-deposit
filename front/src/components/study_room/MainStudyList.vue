@@ -18,13 +18,17 @@
         <v-card-title>{{ selectedStudyRoom.title }} </v-card-title>
         <v-card-text>
           <div>
-            기간: {{ selectedStudyRoom.startDate }} ~{{ selectedStudyRoom.endDate }}
+            기간: {{ selectedStudyRoom.startDate }} ~{{
+              selectedStudyRoom.endDate
+            }}
           </div>
-          <div>필요 보증금: {{selectedStudyRoom.deposit}}원</div>
-          <div> 현재 가지고 있는 보증금: </div>
+          <div>필요 보증금: {{ selectedStudyRoom.deposit }}원</div>
+          <div>현재 가지고 있는 보증금: {{ usersPoint }}원</div>
+          <div v-if="insufficientPoints" style="color: red;">포인트가 부족합니다!</div>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="primary" text @click="closeModal">Close</v-btn>
+          <v-btn color="primary" text @click="enterRoom">입장하기</v-btn>
+          <v-btn color="primary" text @click="closeModal">돌아가기</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -45,6 +49,8 @@ export default {
       studyRooms: [], // Initialize an empty array to store study room data
       selectedStudyRoom: null, // Track the selected study room
       isModalOpen: false, // Track whether the modal is open or not
+      usersPoint: 0,
+      insufficientPoints: false,
     };
   },
   mounted() {
@@ -72,12 +78,46 @@ export default {
       });
   },
   methods: {
+    getUserPoint() {
+      axios
+        .get(`${import.meta.env.VITE_API_URI}/users`, {
+          withCredentials: true, // Include cookies in the request
+        })
+        .then((response) => {
+          if (response.status === 200) {
+            this.usersPoint = response.data.data.sumOfChargeAmount;
+          }
+        })
+        .catch((error) => {
+          //  로그인 안되어 있음
+          this.$router.push({ path: "/login/kakao" });
+        });
+    },
     openModal(studyRoom) {
       this.selectedStudyRoom = studyRoom;
+      this.getUserPoint();
       this.isModalOpen = true;
     },
     closeModal() {
       this.isModalOpen = false;
+    },
+    enterRoom() {
+      if (this.usersPoint < this.selectedStudyRoom.deposit) {
+        axios
+          .get(`${import.meta.env.VITE_API_URI}/users`, {
+            withCredentials: true, // Include cookies in the request
+          })
+          .then((response) => {
+            if (response.status === 200) {
+              this.usersPoint = response.data.data.sumOfChargeAmount;
+            }
+          })
+          .catch((error) => {
+            this.$router.push({ path: "/error" });
+          });
+      }else{
+        this.insufficientPoints=true;
+      }
     },
   },
 };
