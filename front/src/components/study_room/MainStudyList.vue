@@ -24,7 +24,12 @@
           </div>
           <div>필요 보증금: {{ selectedStudyRoom.deposit }}원</div>
           <div>현재 가지고 있는 보증금: {{ usersPoint }}원</div>
-          <div v-if="insufficientPoints" style="color: red;">포인트가 부족합니다!</div>
+          <div v-if="insufficientPoints" style="color: red">
+            포인트가 부족합니다!
+          </div>
+          <div v-if="alreadyEnter" style="color: red">
+            이미 들어가있는 스터디방 입니다!
+          </div>
         </v-card-text>
         <v-card-actions>
           <v-btn color="primary" text @click="enterRoom">입장하기</v-btn>
@@ -51,6 +56,7 @@ export default {
       isModalOpen: false, // Track whether the modal is open or not
       usersPoint: 0,
       insufficientPoints: false,
+      alreadyEnter: false,
     };
   },
   mounted() {
@@ -68,7 +74,6 @@ export default {
       .then((response) => {
         if (response.status === 200) {
           this.studyRooms = response.data.data;
-          console.log(this.studyRooms);
         } else {
           this.$router.push({ path: "/error" });
         }
@@ -100,33 +105,39 @@ export default {
     },
     closeModal() {
       this.isModalOpen = false;
+      this.insufficientPoints = false;
+      this.alreadyEnter = false;
     },
     enterRoom() {
       if (this.usersPoint >= this.selectedStudyRoom.deposit) {
         axios({
-        method: "post", // [요청 타입]
-        url: `${import.meta.env.VITE_API_URI}/studyroom/enter`, // [요청 주소]
-        data: JSON.stringify({
-          id:this.selectedStudyRoom.id
-        }), // [요청 데이터]
+          method: "post", // [요청 타입]
+          url: `${import.meta.env.VITE_API_URI}/studyroom/enter`, // [요청 주소]
+          data: JSON.stringify({
+            id: this.selectedStudyRoom.id,
+          }), // [요청 데이터]
 
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-        },
-        withCredentials: true,
-      })
-        .then((response) => {
-          if (response.status === 200) {
-            this.$router.push({ path: "/studyroom/attendance/" + this.selectedStudyRoom.id });
-          } else {
-            this.$router.push({ path: "/error" });
-          }
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+          },
+          withCredentials: true,
         })
-        .catch(function (error) {
-          this.$router.push({ path: "/error" });
-        });
-      }else{
-        this.insufficientPoints=true;
+          .then((response) => {
+            if (response.status === 200) {
+              this.$router.push({
+                path: "/studyroom/attendance/" + this.selectedStudyRoom.id,
+              });
+            } else {
+              this.$router.push({ path: "/error" });
+            }
+          })
+          .catch((error) => {
+            if (error.response.status == 409) {
+              this.alreadyEnter = true;
+            }
+          });
+      } else {
+        this.insufficientPoints = true;
       }
     },
   },
