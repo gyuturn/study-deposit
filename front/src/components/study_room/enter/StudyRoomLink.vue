@@ -1,10 +1,10 @@
 <template>
   <div>
     <!-- 상단 동그란 박스 -->
-    <v-row justify="center" class="mb-4">
+    <v-row justify="center" class="mb-8">
       <v-col cols="12" sm="8" md="6">
-        <v-card class="text-center">
-          <v-title> 스터디방 제목 </v-title>
+        <v-card class="text-center bg">
+          <v-title class="title"> 스터디방 제목 </v-title>
           <v-card-actions class="link-btn">
             <!-- 출석하기 링크 -->
             <v-btn class="link" @click="goTo('attendance')">출석하기</v-btn>
