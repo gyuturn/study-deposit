@@ -117,7 +117,7 @@ export default {
       })
         .then((response) => {
           if (response.status === 200) {
-            this.$router.push({ path: "/studyroom/list" });
+            this.$router.push({ path: "/studyroom/attendance/" + this.selectedStudyRoom.id });
           } else {
             this.$router.push({ path: "/error" });
           }

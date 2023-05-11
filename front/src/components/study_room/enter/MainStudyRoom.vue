@@ -8,9 +8,9 @@
             <v-col cols="12" sm="8" md="6">
               <v-card class="text-center bg">
                 <v-title class="title">출석하기</v-title>
-                <v-text>
-                  <div class="label">현재시간: {{ currentTime }}</div>
-                  <div class="label">출석시간: 02:00 ~ 02:05</div>
+                <v-text class="text-center">
+                  <div class="label text-center" >현재시간: {{ currentTime }}</div>
+                  <div class="label text-center">출석시간: 02:00 ~ 02:05</div>
                 </v-text>
                 <v-action>
                   <v-btn class="btn" @click="goTo('chat')">출석하기</v-btn>
@@ -18,24 +18,14 @@
               </v-card>
             </v-col>
           </v-row>
+          <NowAttendance />
           <v-row justify="center" class="mb-8">
             <v-col cols="12" sm="8" md="6">
               <v-card class="text-center bg">
-                <v-title class="title">출석현황</v-title>
-                <v-text>
-                  <div class="label">현재시간: {{ currentTime }}</div>
-                  <div class="label">출석시간: 02:00 ~ 02:05</div>
-                </v-text>
-              </v-card>
-            </v-col>
-          </v-row>
-          <v-row justify="center" class="mb-8 ">
-            <v-col cols="12" sm="8" md="6">
-              <v-card class="text-center bg">
                 <v-title class="title">출석제한</v-title>
-                <v-text>
-                  <div class="label">퇴출기준: 스터기기간의 1/3</div>
-                  <div class="label">현재 스터디방 기준 퇴출기준: 3일</div>
+                <v-text class="text-center">
+                  <div class="label text-center" >스터디 기간의 1/3 이상 결석 시 자동 퇴출</div>
+                  <div class="label text-center">현재방 퇴출 기간:5일</div>
                 </v-text>
               </v-card>
             </v-col>
@@ -49,11 +39,13 @@
 <script>
 import axios from "axios";
 import StudyRoomLink from "./StudyRoomLink.vue";
+import NowAttendance from "./NowAttendance.vue"
 
 export default {
   name: "MainStudyRoom",
   components: {
     StudyRoomLink,
+    NowAttendance
   },
   data() {
     return {
@@ -122,6 +114,7 @@ export default {
 .label {
   font-weight: bold;
   font-size: 16px;
+  margin: 4px;
 }
 
 .bg {
