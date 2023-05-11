@@ -35,7 +35,7 @@ export default {
         case "attendance":
           this.$router.push({ path: "/studyroom/attendance/" + number });
           break;
-        case "room-info":
+        case "info":
           this.$router.push({ path: "/studyroom/info/" + number });
           break;
         case "chat":
