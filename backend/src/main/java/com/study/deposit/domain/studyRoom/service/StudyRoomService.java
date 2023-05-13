@@ -140,6 +140,35 @@ public class StudyRoomService {
 
     }
 
+    /**
+     * 나의 스터디방 리스트 조회(메인 홈페이지에서 사용) 생성날짜 기준으로 최근날짜 순으로 정렬
+     * 마이페이지에서 사용
+     */
+    public List<StudyRoomInfoResDto> getStudyRoomList(Users users) {
+        log.info("나의 스터디방  조회");
+        List<StudyRoomInfoResDto> studyRoomDtoList = new ArrayList<>();
+        List<StudyRoom> studyRooms = getMyStudyRoom(users);
+        for (StudyRoom studyRoom : studyRooms) {
+            studyRoomDtoList.add(StudyRoomInfoResDto.getEntity(
+                    studyRoom,
+                    hashTagService.getHashTagsByStudyRoom(studyRoom),
+                    getNowOccupancy(studyRoom)));
+        }
+        return studyRoomDtoList;
+
+    }
+
+    private List<StudyRoom> getMyStudyRoom(Users users) {
+        List<StudyRoom> studyRooms = new ArrayList<>();
+        List<UserStudyRoom> userStudyRooms = userStudyRoomDao.findByUsers(users);
+        for (UserStudyRoom userStudyRoom : userStudyRooms) {
+            if (!studyRooms.contains(userStudyRoom.getStudyRoom())) {
+                studyRooms.add(userStudyRoom.getStudyRoom());
+            }
+        }
+        return studyRooms;
+    }
+
     //특정 스터디방에 현재 참가중인 인원 조회
     private Long getNowOccupancy(StudyRoom studyRoom) {
         return Long.valueOf(userStudyRoomDao.findByStudyRoom(studyRoom).size());
@@ -159,6 +188,7 @@ public class StudyRoomService {
                 hashTagService.getHashTagsByStudyRoom(studyRoom),
                 getNowOccupancy(studyRoom));
     }
+
 
 
 }
