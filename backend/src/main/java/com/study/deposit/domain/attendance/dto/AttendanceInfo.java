@@ -12,5 +12,7 @@ public class AttendanceInfo {
     @NotNull
     private Long AbsenceDay;
     @NotNull
+    private Long attendanceDay;
+    @NotNull
     private Boolean todaysAttendance;
 }

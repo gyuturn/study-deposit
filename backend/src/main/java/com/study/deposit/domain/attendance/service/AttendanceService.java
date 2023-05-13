@@ -93,6 +93,7 @@ public class AttendanceService {
             attendanceInfo.setTotalAttendanceDay(totalAttendanceCountByUser); //총 출석일(스터디방 입장날짜 기준)
             attendanceInfo.setUsersNickName(users.getNickName());
             attendanceInfo.setAbsenceDay(totalAttendanceCountByUser - attendanceCount); // 결석일 계산
+            attendanceInfo.setAttendanceDay(attendanceCount); // 출석일 계산
 
             updateTodaysAttendance(studyRoom, attendanceInfo, users); //오늘 출석 업데이트
 

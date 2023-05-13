@@ -22,6 +22,9 @@
               <div class="label" style="color: red">
                 결석일수: {{info.absenceDay}}일
               </div>
+              <div class="label" style="color: blue">
+                출석일수: {{info.attendanceDay}}일
+              </div>
               <div class="label">
                 입장일로부터 필요 출석수: {{info.totalAttendanceDay}}일
               </div>
