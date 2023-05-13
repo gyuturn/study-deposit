@@ -1,6 +1,7 @@
 package com.study.deposit.domain.studyRoom.domain;
 
 import com.study.deposit.domain.user.domain.Users;
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -38,12 +39,16 @@ public class UserStudyRoom {
     @Enumerated(EnumType.STRING)
     private StudyRoomRole studyRoomRole;
 
+    @NotNull
+    private LocalDateTime enterDate;
+
     //호스트가 방을 만들때만 사용가능
     public static UserStudyRoom toEntityForHost(StudyRoom studyRoom, Users host,StudyRoomRole studyRoomRole) {
         return UserStudyRoom.builder()
                 .studyRoom(studyRoom)
                 .users(host)
                 .studyRoomRole(studyRoomRole)
+                .enterDate(LocalDateTime.now())
                 .build();
     }
 
