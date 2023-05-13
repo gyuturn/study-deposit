@@ -73,6 +73,7 @@ public class AttendanceService {
     }
 
     public AttendanceListResDto getAttendanceList(StudyRoom studyRoom) {
+        log.info("현재 출석현황 조회");
         AttendanceListResDto resDto = new AttendanceListResDto();
         updateAttendanceTime(studyRoom, resDto); //  resDto 출석시간 업데이트
 

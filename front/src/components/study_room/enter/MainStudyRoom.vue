@@ -12,7 +12,7 @@
                   <div class="label text-center">
                     현재시간: {{ currentTime }}
                   </div>
-                  <div class="label text-center">출석시간: 02:00 ~ 02:05</div>
+                  <div class="label text-center">출석시간: {{startAttendanceTime}} ~ {{endAttendanceTime}}</div>
                 </v-text>
                 <v-action>
                   <v-btn class="btn" @click="sendAttendance">출석하기</v-btn>
@@ -50,7 +50,9 @@
             >출석이 정상적으로 처리되었습니다.</span
           >
           <span v-else-if="attendanceStatus === 202">지각 출석되었습니다.</span>
-           <span v-else-if="attendanceStatus === 204">아직 출석시간이 아닙니다.</span>
+          <span v-else-if="attendanceStatus === 204"
+            >아직 출석시간이 아닙니다.</span
+          >
           <span v-else-if="attendanceStatus === 409">이미 출석되었습니다.</span>
         </v-card-text>
         <v-card-actions>
@@ -78,6 +80,8 @@ export default {
       currentTime: "", // Variable to hold the current time
       attendanceModal: false,
       attendanceStatus: 0,
+      startAttendanceTime: "",
+      endAttendanceTime: "",
     };
   },
   mounted() {
@@ -87,10 +91,11 @@ export default {
     // Update the current time every second
     setInterval(this.getCurrentTime, 1000);
 
-    // Make the API request
     axios({
       method: "get", // [요청 타입]
-      url: `${import.meta.env.VITE_API_URI}/studyroom`, // [요청 주소]
+      url: `${
+        import.meta.env.VITE_API_URI
+      }/studyroom/attendance/list/${this.getStudyRoomId()}`, // [요청 주소]
       headers: {
         "Content-Type": "application/json; charset=utf-8",
       },
@@ -98,13 +103,14 @@ export default {
     })
       .then((response) => {
         if (response.status === 200) {
-          this.studyRooms = response.data.data;
+          this.startAttendanceTime = response.data.data.startAttendanceTime;
+          this.endAttendanceTime = response.data.data.endAttendanceTime;
         } else {
-          this.$router.push({ path: "/error" });
+          this.$router.push({ path: "/login/kakao" });
         }
       })
       .catch(function (error) {
-        this.$router.push({ path: "/error" });
+        this.$router.push({ path: "/login/kakao" });
       });
   },
   methods: {
@@ -130,14 +136,13 @@ export default {
         }), // [요청 데이터]
       })
         .then((response) => {
-            console.log(response)
           //정상 출석
           if (response.status === 201) {
             this.attendanceStatus = 201;
           } else if (response.status === 202) {
             //지각 출석
             this.attendanceStatus = 202;
-          }else if(response.status===204){
+          } else if (response.status === 204) {
             this.attendanceStatus = 204;
           }
           this.attendanceModal = true;
