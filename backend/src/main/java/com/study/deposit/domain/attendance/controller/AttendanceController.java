@@ -81,6 +81,7 @@ public class AttendanceController {
     @GetMapping("/list/{id}")
     public ResponseEntity<CommonResponse> getAttendances(@PathVariable("id") Long studyRoomId) {
         StudyRoom studyRoom = studyRoomDao.findById(studyRoomId).get();
+
         AttendanceListResDto attendanceListResDto = attendanceService.getAttendanceList(studyRoom);
         return ResponseEntity
                 .status(HttpStatus.OK)
