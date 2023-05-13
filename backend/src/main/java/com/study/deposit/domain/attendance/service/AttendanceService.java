@@ -10,9 +10,7 @@ import com.study.deposit.domain.studyRoom.dao.UserStudyRoomDao;
 import com.study.deposit.domain.studyRoom.domain.StudyRoom;
 import com.study.deposit.domain.studyRoom.domain.UserStudyRoom;
 import com.study.deposit.domain.user.domain.Users;
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
@@ -57,7 +55,7 @@ public class AttendanceService {
 
     //아직 출석시간 아닌지 체크
     public boolean checkNotAttendanceTime(LocalTime reqTime,StudyRoom studyRoom) {
-        return reqTime.minusMinutes(5).isBefore(studyRoom.getAttendanceTime());
+        return reqTime.minusMinutes(ALLOWED_ATTENDANCE_MINUTE).isBefore(studyRoom.getAttendanceTime());
     }
 
     //오늘 출석체크를 했는지 check
@@ -81,8 +79,49 @@ public class AttendanceService {
         Map<Users, Long> attendanceInfoEachUser = new HashMap<>();
         List<Attendance> attendances = attendanceDao.findByStudyRoom(studyRoom);
 
-
         //출석일수 구하기
+        calAttendanceCountEachUser(attendanceInfoEachUser, attendances);
+
+        //각 유저마다의 결석일수/총 필요 출석일수(스터디방 입장 기준)
+        for (Entry<Users, Long> usersAttendanceCountSet : attendanceInfoEachUser.entrySet()) {
+            AttendanceInfo attendanceInfo = new AttendanceInfo();
+            Users users = usersAttendanceCountSet.getKey();
+            Long attendanceCount = usersAttendanceCountSet.getValue();
+
+            long totalAttendanceCountByUser = getTotalAttendanceCountByUser(studyRoom, users);
+            attendanceInfo.setTotalAttendanceDay(totalAttendanceCountByUser); //총 출석일(스터디방 입장날짜 기준)
+            attendanceInfo.setUsersNickName(users.getNickName());
+            attendanceInfo.setAbsenceDay(totalAttendanceCountByUser - attendanceCount); // 결석일 계산
+
+            updateTodaysAttendance(studyRoom, attendanceInfo, users); //오늘 출석 업데이트
+
+            resDto.getAttendanceInfo().add(attendanceInfo);
+        }
+        return resDto;
+    }
+
+    private void updateTodaysAttendance (StudyRoom studyRoom, AttendanceInfo attendanceInfo, Users users) {
+        List<Attendance> attendanceList = attendanceDao.findByUsersAndStudyRoom(users, studyRoom);
+        for (Attendance attendance : attendanceList) {
+            if (attendance.getAttendanceTime().toLocalDate().equals(LocalDate.now())&&attendance.getAttendanceState().equals(AttendanceState.Attendance)) {
+                attendanceInfo.setTodaysAttendance(true);
+                break;
+            }else{
+                attendanceInfo.setTodaysAttendance(false);
+            }
+        }
+    }
+
+    private long getTotalAttendanceCountByUser(StudyRoom studyRoom, Users users) {
+        UserStudyRoom userStudyRoom = userStudyRoomDao.findByStudyRoomAndUsers(studyRoom, users).get();
+        LocalDate startDate = userStudyRoom.getEnterDate().toLocalDate();
+        LocalDate endDate = studyRoom.getEndDate();
+
+        long totalDateByUser = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+        return totalDateByUser;
+    }
+
+    private void calAttendanceCountEachUser(Map<Users, Long> attendanceInfoEachUser, List<Attendance> attendances) {
         for (Attendance attendance : attendances) {
             if (attendance.getAttendanceState().equals(AttendanceState.Attendance)) {
                 Long attendanceCount = attendanceInfoEachUser.getOrDefault(attendance.getUsers(), Long.valueOf(0));
@@ -92,43 +131,6 @@ public class AttendanceService {
                 attendanceInfoEachUser.put(attendance.getUsers(),attendanceCount);
             }
         }
-
-
-
-
-        //각 유저마다의 결석일수/총 필요 출석일수(스터디방 입장 기준)
-
-        for (Entry<Users, Long> usersAttendanceCountSet : attendanceInfoEachUser.entrySet()) {
-            AttendanceInfo attendanceInfo = new AttendanceInfo();
-
-            Users users = usersAttendanceCountSet.getKey();
-            Long attendanceCount = usersAttendanceCountSet.getValue();
-            UserStudyRoom userStudyRoom = userStudyRoomDao.findByStudyRoomAndUsers(studyRoom, users).get();
-            LocalDate startDate = userStudyRoom.getEnterDate().toLocalDate();
-            LocalDate endDate = studyRoom.getEndDate();
-
-            long totalDateByUser = ChronoUnit.DAYS.between(startDate, endDate) + 1;
-            attendanceInfo.setTotalAttendanceDay(totalDateByUser);
-            attendanceInfo.setUsersNickName(users.getNickName());
-            attendanceInfo.setAbsenceDay(totalDateByUser - attendanceCount);
-
-            List<Attendance> attendanceList = attendanceDao.findByUsersAndStudyRoom(users, studyRoom);
-            for (Attendance attendance : attendanceList) {
-                if (attendance.getAttendanceTime().toLocalDate().equals(LocalDate.now())&&attendance.getAttendanceState().equals(AttendanceState.Attendance)) {
-                    attendanceInfo.setTodaysAttendance(true);
-                    break;
-                }else{
-                    attendanceInfo.setTodaysAttendance(false);
-                }
-            }
-
-            resDto.getAttendanceInfo().add(attendanceInfo);
-        }
-
-
-
-
-        return resDto;
     }
 
     private void updateAttendanceTime(StudyRoom studyRoom, AttendanceListResDto attendanceListResDto) {
