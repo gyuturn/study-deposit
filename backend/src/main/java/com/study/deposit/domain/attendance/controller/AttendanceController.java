@@ -39,23 +39,34 @@ public class AttendanceController {
     @Operation(summary = "출석체크 api", description = "현재의 시간과 스터디방에서 지정한 시간을 기준으로 출석체크 상태를 저장 및 보관")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "201", description = "정상 생성"),
+                    @ApiResponse(responseCode = "201", description = "정상 처리"),
+                    @ApiResponse(responseCode = "202", description = "지각처리"),
                     @ApiResponse(responseCode = "401", description = "사용자 확인 불가"),
+                    @ApiResponse(responseCode = "409", description = "이미 오늘출석을 완료함"),
             }
     )
     @PostMapping
     public ResponseEntity<CommonResponse> postAttendance(@RequestBody @Valid PostAttendanceReqDto reqDto) {
         StudyRoom studyRoom = studyRoomDao.findById(reqDto.getStudyRoomId()).get();
+
+        //만약 이미 출석을 했을경우 CONFLICT
+        if (attendanceService.checkTodayAttendance(authService.getUser(), studyRoom)) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(CommonResponse.toResponse(CommonCode.CONFLICT));
+        }
+
         Attendance attendance = attendanceService.postAttendance(studyRoom, authService.getUser(), reqDto);
         return diffResponseForAttendance(attendance);
     }
+
 
     private ResponseEntity<CommonResponse> diffResponseForAttendance(Attendance attendance) {
         if (!attendance.getAttendanceState().equals(AttendanceState.Attendance)) {
             return ResponseEntity
                     .status(HttpStatus.ACCEPTED)
                     .body(CommonResponse.toResponse(CommonCode.ACCEPTED));
-        }else{
+        } else {
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(CommonResponse.toResponse(CommonCode.CREATED));
