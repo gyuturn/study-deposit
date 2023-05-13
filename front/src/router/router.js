@@ -7,6 +7,7 @@ import SuccessChange from "@/components/login/SuccessChange.vue"
 import MypageHome from "@/components/mypage/MypageHome.vue"
 import KakaoPayment from "@/components/mypage/payment/kakaopay/KakaoPayment.vue"
 import PaymentResult from "@/components/mypage/payment/PaymentResult.vue"
+import MyStudyRooms from "@/components/mypage/MyStudyRooms.vue"
 
 import PostStudyRoom from "@/components/study_room/PostStudyRoom.vue"
 import MainStudyList from "@/components/study_room/MainStudyList.vue"
@@ -24,6 +25,7 @@ const router = createRouter({
         { path: "/change/success", name: "SuccessChange", component: SuccessChange },
 
         { path: "/mypage/home", name: "MypageHome", component: MypageHome },
+        { path: "/mypage/studyRooms", name: "MyStudyRooms", component: MyStudyRooms },
 
         { path: "/payment/kakaopay", name: "KakaoPayment", component: KakaoPayment },
         { path: "/payment/result", name: "PaymentResult", component: PaymentResult },

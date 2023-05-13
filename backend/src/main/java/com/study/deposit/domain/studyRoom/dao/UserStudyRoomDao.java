@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserStudyRoomDao extends JpaRepository<UserStudyRoom, Long> {
     List<UserStudyRoom> findByStudyRoom(StudyRoom studyRoom);
+    List<UserStudyRoom> findByUsers(Users users);
 
     Optional<UserStudyRoom> findByStudyRoomAndUsers(StudyRoom studyRoom, Users users);
 }
