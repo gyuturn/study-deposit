@@ -115,10 +115,10 @@ public class StudyRoomService {
         List<StudyRoom> studyRooms = studyRoomDao.findAllByOrderByCreateDateDesc();
 
         //이미 들어가있는 방은 삭제
-        List<StudyRoom> notIncludeOwn = removeEnteredRoom(studyRooms, authService.getUser());
+//        List<StudyRoom> notIncludeOwn = removeEnteredRoom(studyRooms, authService.getUser());
 
         //인원이 꽉찬 방은 삭제
-        return removeFullCapacity(notIncludeOwn);
+        return removeFullCapacity(studyRooms);
     }
 
 
