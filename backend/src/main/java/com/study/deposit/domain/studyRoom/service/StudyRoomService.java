@@ -15,6 +15,7 @@ import com.study.deposit.global.common.code.studyroom.StudyRoomErrorCode;
 import com.study.deposit.global.common.exception.studyroom.StudyRoomException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -142,6 +143,21 @@ public class StudyRoomService {
     //특정 스터디방에 현재 참가중인 인원 조회
     private Long getNowOccupancy(StudyRoom studyRoom) {
         return Long.valueOf(userStudyRoomDao.findByStudyRoom(studyRoom).size());
+    }
+
+    public StudyRoom findStudyRoom(Long studyRoomId) {
+        Optional<StudyRoom> optionalStudyRoom = studyRoomDao.findById(studyRoomId);
+        if (optionalStudyRoom.isEmpty()) {
+            throw new StudyRoomException(StudyRoomErrorCode.NOT_EXIST, HttpStatus.NOT_FOUND);
+        }
+        return optionalStudyRoom.get();
+    }
+
+    public StudyRoomInfoResDto getStudyRoomInfo(StudyRoom studyRoom) {
+        return StudyRoomInfoResDto.getEntity(
+                studyRoom,
+                hashTagService.getHashTagsByStudyRoom(studyRoom),
+                getNowOccupancy(studyRoom));
     }
 
 
