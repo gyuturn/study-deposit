@@ -3,13 +3,22 @@ package com.study.deposit.domain.attendance.service;
 import com.study.deposit.domain.attendance.dao.AttendanceDao;
 import com.study.deposit.domain.attendance.domain.Attendance;
 import com.study.deposit.domain.attendance.domain.AttendanceState;
+import com.study.deposit.domain.attendance.dto.AttendanceInfo;
+import com.study.deposit.domain.attendance.dto.AttendanceListResDto;
 import com.study.deposit.domain.attendance.dto.PostAttendanceReqDto;
+import com.study.deposit.domain.studyRoom.dao.UserStudyRoomDao;
 import com.study.deposit.domain.studyRoom.domain.StudyRoom;
+import com.study.deposit.domain.studyRoom.domain.UserStudyRoom;
 import com.study.deposit.domain.user.domain.Users;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AttendanceService {
     private final AttendanceDao attendanceDao;
+    private final UserStudyRoomDao userStudyRoomDao;
+
     private static final int ALLOWED_ATTENDANCE_MINUTE=5;
 
 
@@ -34,16 +45,19 @@ public class AttendanceService {
     public Attendance postAttendance(StudyRoom studyRoom, Users users, PostAttendanceReqDto reqDto) {
         log.info("출석요청 요청 user:{}, studyRoom:{}", users.getId(), studyRoom.getId());
         //스터디방 설정 시간
-        LocalTime beforeReqTime = reqDto.getReqTime().toLocalTime().minusMinutes(ALLOWED_ATTENDANCE_MINUTE);
-        LocalTime afterReqTime = reqDto.getReqTime().toLocalTime().plusMinutes(ALLOWED_ATTENDANCE_MINUTE);
-        //출석시간기준 5분간격 이내면 출석인정
+          //출석시간기준 5분간격 이내면 출석인정
         Attendance attendance = Attendance.builder()
                 .attendanceTime(reqDto.getReqTime())
                 .studyRoom(studyRoom)
                 .users(users)
                 .build();
-        calAttendance(studyRoom, beforeReqTime, afterReqTime, attendance);
+        calAttendance(studyRoom, reqDto.getReqTime().toLocalTime(), attendance);
         return attendanceDao.save(attendance);
+    }
+
+    //아직 출석시간 아닌지 체크
+    public boolean checkNotAttendanceTime(LocalTime reqTime,StudyRoom studyRoom) {
+        return reqTime.minusMinutes(5).isBefore(studyRoom.getAttendanceTime());
     }
 
     //오늘 출석체크를 했는지 check
@@ -58,11 +72,75 @@ public class AttendanceService {
             }
         }
         return false;
-
     }
 
-    private void calAttendance(StudyRoom studyRoom, LocalTime beforeReqTime, LocalTime afterReqTime,
-                           Attendance attendance) {
+    public AttendanceListResDto getAttendanceList(StudyRoom studyRoom) {
+        AttendanceListResDto resDto = new AttendanceListResDto();
+        updateAttendanceTime(studyRoom, resDto); //  resDto 출석시간 업데이트
+
+        Map<Users, Long> attendanceInfoEachUser = new HashMap<>();
+        List<Attendance> attendances = attendanceDao.findByStudyRoom(studyRoom);
+
+
+        //출석일수 구하기
+        for (Attendance attendance : attendances) {
+            if (attendance.getAttendanceState().equals(AttendanceState.Attendance)) {
+                Long attendanceCount = attendanceInfoEachUser.getOrDefault(attendance.getUsers(), Long.valueOf(0));
+                attendanceInfoEachUser.put(attendance.getUsers(),attendanceCount+1);
+            }else{
+                Long attendanceCount = attendanceInfoEachUser.getOrDefault(attendance.getUsers(), Long.valueOf(0));
+                attendanceInfoEachUser.put(attendance.getUsers(),attendanceCount);
+            }
+        }
+
+
+
+
+        //각 유저마다의 결석일수/총 필요 출석일수(스터디방 입장 기준)
+
+        for (Entry<Users, Long> usersAttendanceCountSet : attendanceInfoEachUser.entrySet()) {
+            AttendanceInfo attendanceInfo = new AttendanceInfo();
+
+            Users users = usersAttendanceCountSet.getKey();
+            Long attendanceCount = usersAttendanceCountSet.getValue();
+            UserStudyRoom userStudyRoom = userStudyRoomDao.findByStudyRoomAndUsers(studyRoom, users).get();
+            LocalDate startDate = userStudyRoom.getEnterDate().toLocalDate();
+            LocalDate endDate = studyRoom.getEndDate();
+
+            long totalDateByUser = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+            attendanceInfo.setTotalAttendanceDay(totalDateByUser);
+            attendanceInfo.setUsersNickName(users.getNickName());
+            attendanceInfo.setAbsenceDay(totalDateByUser - attendanceCount);
+
+            List<Attendance> attendanceList = attendanceDao.findByUsersAndStudyRoom(users, studyRoom);
+            for (Attendance attendance : attendanceList) {
+                if (attendance.getAttendanceTime().toLocalDate().equals(LocalDate.now())&&attendance.getAttendanceState().equals(AttendanceState.Attendance)) {
+                    attendanceInfo.setTodaysAttendance(true);
+                    break;
+                }else{
+                    attendanceInfo.setTodaysAttendance(false);
+                }
+            }
+
+            resDto.getAttendanceInfo().add(attendanceInfo);
+        }
+
+
+
+
+        return resDto;
+    }
+
+    private void updateAttendanceTime(StudyRoom studyRoom, AttendanceListResDto attendanceListResDto) {
+        attendanceListResDto.setStartAttendanceTime(studyRoom.getAttendanceTime().minusMinutes(ALLOWED_ATTENDANCE_MINUTE));
+        attendanceListResDto.setEndAttendanceTime(studyRoom.getAttendanceTime().plusMinutes(ALLOWED_ATTENDANCE_MINUTE));
+    }
+
+
+    private void calAttendance(StudyRoom studyRoom, LocalTime reqTime, Attendance attendance) {
+        LocalTime beforeReqTime = reqTime.minusMinutes(ALLOWED_ATTENDANCE_MINUTE);
+        LocalTime afterReqTime = reqTime.plusMinutes(ALLOWED_ATTENDANCE_MINUTE);
+
         if (studyRoom.getAttendanceTime().isAfter(beforeReqTime) &&
                 studyRoom.getAttendanceTime().isBefore(afterReqTime)) {
             attendance.updateAttendanceState(AttendanceState.Attendance); //정상 출석

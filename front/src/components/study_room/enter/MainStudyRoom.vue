@@ -42,6 +42,7 @@
         <v-card-title>
           <span v-if="attendanceStatus === 201">정상 출석</span>
           <span v-else-if="attendanceStatus === 202">지각 출석</span>
+          <span v-else-if="attendanceStatus === 204">출석시간 아님</span>
           <span v-else-if="attendanceStatus === 409">이미 출석 완료</span>
         </v-card-title>
         <v-card-text>
@@ -49,6 +50,7 @@
             >출석이 정상적으로 처리되었습니다.</span
           >
           <span v-else-if="attendanceStatus === 202">지각 출석되었습니다.</span>
+           <span v-else-if="attendanceStatus === 204">아직 출석시간이 아닙니다.</span>
           <span v-else-if="attendanceStatus === 409">이미 출석되었습니다.</span>
         </v-card-text>
         <v-card-actions>
@@ -128,12 +130,15 @@ export default {
         }), // [요청 데이터]
       })
         .then((response) => {
+            console.log(response)
           //정상 출석
           if (response.status === 201) {
             this.attendanceStatus = 201;
           } else if (response.status === 202) {
             //지각 출석
             this.attendanceStatus = 202;
+          }else if(response.status===204){
+            this.attendanceStatus = 204;
           }
           this.attendanceModal = true;
         })
