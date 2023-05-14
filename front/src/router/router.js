@@ -15,6 +15,7 @@ import MainStudyList from "@/components/study_room/MainStudyList.vue"
 import MainStudyRoom from "@/components/study_room/enter/MainStudyRoom.vue"
 import StudyRoomPerInfo from "@/components/study_room/enter/StudyRoomPerInfo.vue"
 import NotReady from "@/components/NotReady.vue"
+import Error from "@/components/Error.vue"
 const router = createRouter({
     history: createWebHistory(),
     routes: [ // path별 component를 추가한다.
@@ -47,6 +48,11 @@ const router = createRouter({
             path: "/not/ready",
             name: "NotReady",
             component: NotReady,
+        },
+        {
+            path: "/error",
+            name: "Error",
+            component: Error,
         },
     ]
     
