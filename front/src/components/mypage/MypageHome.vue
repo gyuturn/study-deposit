@@ -45,14 +45,19 @@
         </v-list>
       </v-card-text>
     </v-card>
+    <Link />
   </v-container>
 </template>
 
 
 <script>
 import axios from "axios";
+import Link from "../Link.vue";
 export default {
   name: "MypageHome",
+  components: {
+    Link,
+  },
   mounted() {
     // 백엔드 서버로 요청 보내기
     axios
@@ -76,11 +81,11 @@ export default {
   data() {
     return {
       listItems: [
-      { title: "회원정보 수정", to: "/edit-profile" },
+      { title: "회원정보 수정", to: "/not/ready" },
       { title: "스터디방 관리", to: "/mypage/studyrooms" },
       { title: "포인트 충전하기", to: "/payment/kakaopay" },
-      { title: "포인트 환전하기", to: "/exchange-points" },
-      { title: "로그아웃", to: "/logout" },
+      { title: "포인트 환전하기", to: "/not/ready" },
+      { title: "로그아웃", to: "/not/ready" },
     ],
       nickname: "",
       sumOfChargeAmount: "",
