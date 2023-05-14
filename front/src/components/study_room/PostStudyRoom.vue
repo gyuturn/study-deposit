@@ -114,7 +114,7 @@ export default {
       this.hashTags = data;
     },
     goHome() {
-      this.$router.push({ path: "/studyroom" });
+      this.$router.push({ path: "/studyroom/list" });
     },
     post() {
       // 서버에 스터디방 데이터를 보내고, 201  받으면 리다이렉트합니다.

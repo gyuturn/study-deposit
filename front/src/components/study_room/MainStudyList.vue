@@ -37,17 +37,19 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <Link />
   </v-container>
 </template>
 
 <script>
 import axios from "axios";
 import StudyRoomInfo from "./StudyRoomInfo.vue";
-
+import Link from "../Link.vue";
 export default {
   name: "MainStudyList",
   components: {
     StudyRoomInfo,
+    Link,
   },
   data() {
     return {

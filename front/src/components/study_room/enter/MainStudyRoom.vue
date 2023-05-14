@@ -4,6 +4,7 @@
       <v-main>
         <v-container fluid>
           <StudyRoomLink />
+          <Link />
           <v-row justify="center" class="mb-8">
             <v-col cols="12" sm="8" md="6">
               <v-card class="text-center bg">
@@ -12,7 +13,10 @@
                   <div class="label text-center">
                     현재시간: {{ currentTime }}
                   </div>
-                  <div class="label text-center">출석시간: {{startAttendanceTime}} ~ {{endAttendanceTime}}</div>
+                  <div class="label text-center">
+                    출석시간: {{ startAttendanceTime }} ~
+                    {{ endAttendanceTime }}
+                  </div>
                 </v-text>
                 <v-action>
                   <v-btn class="btn" @click="sendAttendance">출석하기</v-btn>
@@ -37,6 +41,7 @@
         </v-container>
       </v-main>
     </v-app>
+
     <v-dialog v-model="attendanceModal" max-width="500px">
       <v-card>
         <v-card-title>
@@ -69,11 +74,13 @@
 import axios from "axios";
 import StudyRoomLink from "./StudyRoomLink.vue";
 import NowAttendance from "./NowAttendance.vue";
+import Link from "../../Link.vue";
 export default {
   name: "MainStudyRoom",
   components: {
     StudyRoomLink,
     NowAttendance,
+    Link,
   },
   data() {
     return {

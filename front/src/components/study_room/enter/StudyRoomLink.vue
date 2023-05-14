@@ -39,7 +39,8 @@ export default {
           this.$router.push({ path: "/studyroom/info/" + number });
           break;
         case "chat":
-          this.$router.push({ path: "/studyroom/chat/" + +number });
+          // this.$router.push({ path: "/studyroom/chat/" + +number });
+          this.$router.push({ path: "/not/ready"});
           break;
         default:
           break;

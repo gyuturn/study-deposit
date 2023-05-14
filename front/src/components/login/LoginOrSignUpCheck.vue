@@ -15,7 +15,7 @@ export default {
       .then((response) => {
         if (response.status === 200) {
           // 이미 변경한 이력이 있는경우 홈으로
-          this.$router.push({ path: "/" });
+          this.$router.push({ path: "/mypage/home" });
         } else if (response.status === 202) {
           //  닉네임 변경 요청 요망
           this.$router.push({ path: "/login/enter/nickname" });
