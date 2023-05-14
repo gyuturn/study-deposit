@@ -9,7 +9,6 @@ spring:
       ddl-auto: create #create, create-drop, none, update
       naming:
         physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy # set DB column name by snake case
-#  sql:
-#    init:
-#      mode: always
-#      schema-locations: data.sql
+
+imp_key: ${IMPORT_API_KEY}
+imp_secret: ${IMPORT_API_SECRET_KEY}
