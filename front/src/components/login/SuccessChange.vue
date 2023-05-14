@@ -22,7 +22,7 @@ export default {
   name: "SuccessChange",
   methods: {
     gohome() {
-      this.$router.push({ path: "/" });
+      this.$router.push({ path: "/studyroom/list" });
     },
   },
 };

@@ -27,13 +27,18 @@
         </v-row>
       </v-card-actions>
     </v-card>
+    <Link />
   </v-container>
 </template>
 
 <script>
 import axios from "axios";
+import Link from "../../../Link.vue";
 export default {
   name: "KakaoPayment",
+    components: {
+    Link,
+  },
   data() {
     return {
       chargeAmount: "",

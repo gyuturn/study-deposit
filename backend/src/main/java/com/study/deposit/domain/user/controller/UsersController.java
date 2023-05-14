@@ -2,6 +2,7 @@ package com.study.deposit.domain.user.controller;
 
 
 import com.study.deposit.domain.point.service.PointRecordService;
+import com.study.deposit.domain.studyRoom.service.StudyRoomService;
 import com.study.deposit.domain.user.dto.NickNameReqDto;
 import com.study.deposit.domain.user.service.AuthService;
 import com.study.deposit.domain.user.service.MyPageService;
@@ -32,6 +33,7 @@ public class UsersController {
     private final AuthService authService;
     private final UserService userService;
     private final MyPageService myPageService;
+    private final StudyRoomService studyRoomService;
 
 
     @Operation(summary = "닉네임 변경 api", description = "사용자 닉네임 변경")
@@ -88,6 +90,20 @@ public class UsersController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(CommonResponse.toResponse(CommonCode.OK,myPageService.getMyPageHomeDto()));
+    }
+
+    @Operation(summary = "나의 스터디방 리스트 조회 api", description = "마이페이지의 스터디방 조회")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "정상 처리"),
+                    @ApiResponse(responseCode = "401", description = "로그인 되어 있지 않음")
+            }
+    )
+    @GetMapping("/studyrooms")
+    public ResponseEntity<CommonResponse> getMyStudyRooms() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.toResponse(CommonCode.OK,studyRoomService.getStudyRoomList(authService.getUser())));
     }
 
 }

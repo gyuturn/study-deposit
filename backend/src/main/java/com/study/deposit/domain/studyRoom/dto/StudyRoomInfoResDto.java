@@ -14,6 +14,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Data
 public class StudyRoomInfoResDto {
     @NotNull
+    private Long id;
+    @NotNull
     private String title;
     @NotNull
     private List<String> hashTags;
@@ -39,15 +41,17 @@ public class StudyRoomInfoResDto {
     public static StudyRoomInfoResDto getEntity(StudyRoom studyRoom, List<HashTag> hashTags, Long currentOccupancy) {
         StudyRoomInfoResDto studyRoomInfoResDto = new StudyRoomInfoResDto();
         studyRoomInfoResDto.setTitle(studyRoom.getTitle());
+        studyRoomInfoResDto.setId(studyRoom.getId());
         studyRoomInfoResDto.setCapacity(studyRoom.getPersonCapacity());
         studyRoomInfoResDto.setAttendanceTime(studyRoom.getAttendanceTime());
         studyRoomInfoResDto.setEndDate(studyRoom.getEndDate());
         //해시태그
+        List<String> ownHashTags = new ArrayList<>();
         for (HashTag hashTag : hashTags) {
-            List<String> ownHashTags = new ArrayList<>();
             ownHashTags.add(hashTag.getTagName());
-            studyRoomInfoResDto.setHashTags(ownHashTags);
         }
+        studyRoomInfoResDto.setHashTags(ownHashTags);
+
         studyRoomInfoResDto.setCurrentOccupancy(currentOccupancy);
         studyRoomInfoResDto.setStartDate(studyRoom.getCreateDate().toLocalDate());
         studyRoomInfoResDto.setDeposit(studyRoom.getDeposit());

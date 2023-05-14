@@ -5,8 +5,11 @@ import com.study.deposit.domain.point.domain.PaymentType;
 import com.study.deposit.domain.point.domain.PointRecord;
 import com.study.deposit.domain.point.dto.PointRecordPrepareDto;
 import com.study.deposit.domain.user.domain.Users;
+import com.study.deposit.domain.user.service.AuthService;
 import com.study.deposit.global.common.code.pointrecord.PointRecordErrorCode;
+import com.study.deposit.global.common.code.studyroom.StudyRoomErrorCode;
 import com.study.deposit.global.common.exception.DefaultException;
+import com.study.deposit.global.common.exception.payment.PaymentException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PointRecordService {
 
     private final PointRecordDao pointRecordDao;
+    private final AuthService authService;
 
     //금액 합계
     public Long getSumRecordByUser(Users users) {
@@ -68,6 +72,28 @@ public class PointRecordService {
             throw new DefaultException(PointRecordErrorCode.NOT_EXIST_POINT_RECORD, HttpStatus.NOT_FOUND);
         }
         return pointRecord.get();
+    }
+
+    /**
+     * 스터디방 입장(방 만들때도 공통 사용) 입장시 금액이 부족하면 402 에러
+     */
+    public void calEnterRoom(Long studyRoomsDeposit) {
+        Users enterUser = authService.getUser();
+        Long sumRecordByEnterUser = getSumRecordByUser(enterUser);
+
+        //스터디 보증금, 사용자 보유 포인트 비교
+        checkValidEnterRoom(studyRoomsDeposit, sumRecordByEnterUser);
+        //포인트 사용(마이너스 주의!!)
+        insertRecord(enterUser, -studyRoomsDeposit, PaymentType.DEPOSIT);
+        log.info("스터디방 입장, 포인트 차감:{}", studyRoomsDeposit);
+    }
+
+    private void checkValidEnterRoom(Long studyRoomsDeposit, Long sumRecordByEnterUser) {
+        if ((sumRecordByEnterUser < studyRoomsDeposit)) {
+            //유저가 입장 보증금보다 작은 포인트를 가진 경우 예외 터트리기
+            log.error("스터디방 입장, 포인트 부족, 보유포인트:{}, 보증금:{}", sumRecordByEnterUser, studyRoomsDeposit);
+            throw new PaymentException(StudyRoomErrorCode.NOT_ENOUGH_POINT_FOR_DEPOSIT, HttpStatus.PAYMENT_REQUIRED);
+        }
     }
 
 }

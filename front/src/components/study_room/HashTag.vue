@@ -69,6 +69,7 @@ export default {
         )
         .then((response) => {
           this.myTags.push(response.data.data);
+          this.$emit('updateHashTags', this.myTags);
           this.inputText = "";
         })
         .catch((error) => {

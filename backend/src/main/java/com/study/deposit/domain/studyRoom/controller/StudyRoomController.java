@@ -7,6 +7,7 @@ import com.study.deposit.domain.studyRoom.dao.StudyRoomDao;
 import com.study.deposit.domain.studyRoom.dao.UserStudyRoomDao;
 import com.study.deposit.domain.studyRoom.domain.StudyRoom;
 import com.study.deposit.domain.studyRoom.domain.UserStudyRoom;
+import com.study.deposit.domain.studyRoom.dto.EnterStudyRoomReqDto;
 import com.study.deposit.domain.studyRoom.dto.StudyRoomMakingReqDto;
 import com.study.deposit.domain.studyRoom.service.StudyRoomService;
 import com.study.deposit.domain.user.domain.Users;
@@ -26,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,7 +63,7 @@ public class StudyRoomController {
             + "추후 Pageable가능성 고려")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "정상 생성"),
+                    @ApiResponse(responseCode = "200", description = "정상 처리"),
                     @ApiResponse(responseCode = "401", description = "사용자 확인 불가"),
             }
     )
@@ -71,6 +73,41 @@ public class StudyRoomController {
                 .status(HttpStatus.OK)
                 .body(CommonResponse.toResponse(CommonCode.OK,studyRoomService.getStudyRoomList()));
     }
+
+    @Operation(summary = "스터디방 입장 api", description = "스터디방 입장시 요청하는 API")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "정상 처리"),
+                    @ApiResponse(responseCode = "401", description = "사용자 확인 불가"),
+                    @ApiResponse(responseCode = "402", description = "방 입장을 위한 포인트 부족"),
+            }
+    )
+    @PostMapping("/enter")
+    public ResponseEntity<CommonResponse> enterStudyRoom(@RequestBody @Valid EnterStudyRoomReqDto dto) {
+        studyRoomService.enterStudyRoom(dto.getId());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.toResponse(CommonCode.OK));
+    }
+
+    @Operation(summary = "스터디방 건별 정보조회 api", description = "스터디방 건별 정보조회 API")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "정상 처리"),
+                    @ApiResponse(responseCode = "401", description = "사용자 확인 불가"),
+                    @ApiResponse(responseCode = "404", description = "스터디방이 존재하지 않음"),
+            }
+    )
+    @GetMapping("/info/{id}")
+    public ResponseEntity<CommonResponse> enterStudyRoom(@PathVariable("id") Long studyRoomId) {
+        StudyRoom studyRoom = studyRoomService.findStudyRoom(studyRoomId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.toResponse(CommonCode.OK,studyRoomService.getStudyRoomInfo(studyRoom)));
+    }
+
+
+
 
 
 }

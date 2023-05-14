@@ -1,5 +1,8 @@
-package com.study.deposit.domain.studyRoom.domain;
+package com.study.deposit.domain.attendance.domain;
 
+import com.study.deposit.domain.hashTag.domain.HashTag;
+import com.study.deposit.domain.studyRoom.domain.AttendanceType;
+import com.study.deposit.domain.studyRoom.domain.StudyRoom;
 import com.study.deposit.domain.user.domain.Users;
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
@@ -21,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserStudyRoom {
+public class Attendance {
     @Id
     @GeneratedValue
     private Long id;
@@ -36,20 +39,17 @@ public class UserStudyRoom {
     @NotNull
     private Users users;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
-    private StudyRoomRole studyRoomRole;
+    private AttendanceState attendanceState;
 
     @NotNull
-    private LocalDateTime enterDate;
+    private LocalDateTime attendanceTime;
 
-    //호스트가 방을 만들때만 사용가능
-    public static UserStudyRoom toEntityForHost(StudyRoom studyRoom, Users host,StudyRoomRole studyRoomRole) {
-        return UserStudyRoom.builder()
-                .studyRoom(studyRoom)
-                .users(host)
-                .studyRoomRole(studyRoomRole)
-                .enterDate(LocalDateTime.now())
-                .build();
+    public void updateAttendanceState(AttendanceState attendanceState) {
+        this.attendanceState = attendanceState;
     }
+
+
 
 }
