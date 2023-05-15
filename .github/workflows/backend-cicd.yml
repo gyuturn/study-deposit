@@ -3,7 +3,7 @@ name: Backend CI
 on:
   push:
     branches:
-      - cicd/backend-deploy
+      - main
 
 jobs:
   build:
@@ -47,7 +47,7 @@ jobs:
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: kksy2423/study-deposit-backend
-          tags: "test"
+          tags: "main"
           
       - name: Copy jar file to Docker context
         run: cp ./backend/build/libs/deposit-0.0.1-SNAPSHOT.jar ./
@@ -67,4 +67,4 @@ jobs:
           host: ${{ secrets.EC2_IP }}
           key: ${{ secrets.EC2_PASSWORD }}
           script_stop: true
-          script: chmod +x /home/ubuntu/docker-compose/deploy.sh && sh /home/ubuntu/docker-compose/deploy.sh
+          script: chmod +x /home/ubuntu/backend/deploy.sh && sh /home/ubuntu/backend/deploy.sh
