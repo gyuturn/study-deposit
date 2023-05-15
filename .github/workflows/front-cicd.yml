@@ -27,7 +27,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_PASSWORD }}
           source: "./front/dist"
-          target: "/home/ubuntu"
+          target: "/home/ubuntu/"
 
       - name: Execute Server Init Script
         uses: appleboy/ssh-action@master
