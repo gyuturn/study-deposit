@@ -25,7 +25,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_IP }}
           username: ubuntu
-          key: ${{ secrets.EC2_PASSWORD }}
+          password: ${{ secrets.EC2_PASSWORD }}
           source: "./front/dist"
           target: "/var/www/deploy/"
 
