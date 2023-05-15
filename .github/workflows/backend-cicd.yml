@@ -3,7 +3,7 @@ name: Backend CI
 on:
   push:
     branches:
-      - main
+      - cicd/backend-deploy
 
 jobs:
   build:
@@ -47,7 +47,7 @@ jobs:
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: kksy2423/study-deposit-backend
-          tags: "main"
+          tags: "test"
           
       - name: Copy jar file to Docker context
         run: cp ./backend/build/libs/deposit-0.0.1-SNAPSHOT.jar ./
