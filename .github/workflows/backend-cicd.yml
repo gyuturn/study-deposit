@@ -34,7 +34,7 @@ jobs:
           FRONT_LOGIN_REDIRECT: ${{ secrets.FRONT.LOGIN_REDIRECT }}
           IMPORT_API_KEY: ${{ secrets.IMPORT.API_KEY }}
           IMPORT_API_SECRET_KEY: ${{ secrets.IMPORT.API_SECRET_KEY }}
-          EC2_IP: ${{ secrets.EC2.IP }}
+          EC2_URI: ${{ secrets.EC2.IP }}
 
       - name: Log in to Docker Hub
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
