@@ -23,7 +23,7 @@ public class SecurityConfig {
 
     @Value("${front.login_redirect}") // application.yml 파일에서 frontendUrl 변수를 가져옴
     private String frontURI;
-    private final static String frontRedirectURL = "/login/check";
+    private final static String frontRedirectURL = "/signin/check";
 
     @Bean
     public RedirectStrategy customRedirectStrategy() {
