@@ -19,10 +19,10 @@ import Error from "@/components/Error.vue"
 const router = createRouter({
     history: createWebHistory(),
     routes: [ // path별 component를 추가한다.
-        { path: "/", name: "", component: "" },
-        { path: "/login/kakao", name: "KakaoLogin", component: KakaoLogin },
-        { path: "/login/check", name: "LoginOrSignUpCheck", component: LoginOrSignUpCheck },
-        { path: "/login/enter/nickname", name: "EnterNickName", component: EnterNickName },
+        { path: "/", name: "MainStudyList", component: MainStudyList },
+        { path: "/sign_in/kakao", name: "KakaoLogin", component: KakaoLogin },
+        { path: "/sign_in/check", name: "LoginOrSignUpCheck", component: LoginOrSignUpCheck },
+        { path: "/sign_in/enter/nickname", name: "EnterNickName", component: EnterNickName },
 
         { path: "/change/success", name: "SuccessChange", component: SuccessChange },
 
