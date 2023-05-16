@@ -23,7 +23,7 @@ spring:
             client-id: ${KAKAO_API_KEY}
             client-secret: ${KAKAO_SECRET_KEY}
             client-name: Kakao
-            redirect-uri: http://${EC2_URI}:8080/login/oauth2/code/kakao
+            redirect-uri: https://${EC2_DOMAIN}:8080/login/oauth2/code/kakao
             #
             scope: profile_nickname, account_email
             authorization-grant-type: authorization_code
