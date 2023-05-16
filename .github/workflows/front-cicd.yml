@@ -34,7 +34,7 @@ jobs:
         with:
           username: ubuntu
           host: ${{ secrets.EC2_IP }}
-          key: ${{ secrets.EC2_PASSWORD }}
+          password: ${{ secrets.EC2_PASSWORD }}
           script_stop: true
           script: chmod +x /home/ubuntu/front/deploy.sh && sh /home/ubuntu/front/deploy.sh
 
