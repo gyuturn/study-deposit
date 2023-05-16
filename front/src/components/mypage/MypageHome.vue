@@ -74,7 +74,7 @@ export default {
       })
       .catch((error) => {
         //  로그인 안되어 있음
-        this.$router.push({ path: "/login/kakao" });
+        this.$router.push({ path: "/signin/kakao" });
       });
   },
   methods: {},

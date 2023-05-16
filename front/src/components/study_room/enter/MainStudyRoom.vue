@@ -113,11 +113,11 @@ export default {
           this.startAttendanceTime = response.data.data.startAttendanceTime;
           this.endAttendanceTime = response.data.data.endAttendanceTime;
         } else {
-          this.$router.push({ path: "/login/kakao" });
+          this.$router.push({ path: "/signin/kakao" });
         }
       })
       .catch(function (error) {
-        this.$router.push({ path: "/login/kakao" });
+        this.$router.push({ path: "/signin/kakao" });
       });
   },
   methods: {

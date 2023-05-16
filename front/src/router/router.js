@@ -20,9 +20,9 @@ const router = createRouter({
     history: createWebHistory(),
     routes: [ // path별 component를 추가한다.
         { path: "/", name: "MainStudyList", component: MainStudyList },
-        { path: "/login/kakao", name: "KakaoLogin", component: KakaoLogin },
-        { path: "/login/check", name: "LoginOrSignUpCheck", component: LoginOrSignUpCheck },
-        { path: "/login/enter/nickname", name: "EnterNickName", component: EnterNickName },
+        { path: "/signin/kakao", name: "KakaoLogin", component: KakaoLogin },
+        { path: "/signin/check", name: "LoginOrSignUpCheck", component: LoginOrSignUpCheck },
+        { path: "/signin/enter/nickname", name: "EnterNickName", component: EnterNickName },
 
         { path: "/change/success", name: "SuccessChange", component: SuccessChange },
 
