@@ -3,7 +3,6 @@ import App from './App.vue'
 import vuetify from './plugins/vuetify'
 import { loadFonts } from './plugins/webfontloader'
 import router from "./router/router.js"
-import './registerServiceWorker.js'
 import './registerServiceWorker'
 
 loadFonts()

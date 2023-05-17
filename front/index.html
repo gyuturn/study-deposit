@@ -7,10 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>스터디 보증</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png">
+    <!-- <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png">
     <link rel="apple-touch-icon" sizes="256x256" href="/icons/icon-256x256.png">
     <link rel="apple-touch-icon" sizes="384x384" href="/icons/icon-384x384.png">
-    <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png"> -->
 </head>
 
 <body>
@@ -21,3 +21,16 @@
 </html>
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
 <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.8.js"></script>
+<script>
+    if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').then(function (registration) {
+      // Registration was successful
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }, function (err) {
+      // registration failed :(
+      console.log('ServiceWorker registration failed: ', err);
+    });
+  });
+}
+</script>
