@@ -20,7 +20,8 @@
 
 - 카카오 로그인을 통해 회원가입/로그인 진행
 
-#### 스터디방 목록(메인 홈)
+###![kakaklogin](https://github.com/gyuturn/study-deposit/assets/87477702/af6f62b7-067f-4d88-b6cb-b00ff2892b14)
+# 스터디방 목록(메인 홈)
 <img width="143" alt="스크린샷 2023-04-09 오후 2 51 35" src="https://user-images.githubusercontent.com/87477702/230756814-5114cbb0-14ba-42d1-a1c7-67c170babbca.png">
 
 - 현재 진행중인 스터디방 목록 제공
