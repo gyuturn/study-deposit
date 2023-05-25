@@ -2,6 +2,9 @@
 ### 돈을 걸고 하는 스터디
 ### 서울과학기술대학교 졸업작품(캡스톤 디자인) - 1인작품
 
+## 📝 &nbsp; 다운로드 및 링크
+https://www.studydeposit.kro.kr
+https://drive.google.com/file/d/1o8I6u0qbQwziXqAcpZhf6aeU_zpd6FSo/view?usp=sharing (apk 파일)
 
 ## 📝 &nbsp; Fuctions
 #### 1️⃣ 자신이 원하는 스터디를 개설하고 보증금을 걸 수 있다.
